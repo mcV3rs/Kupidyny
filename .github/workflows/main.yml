@@ -1,6 +1,13 @@
 name: Continuous Integration
 
-on: [push]
+on:
+  push:
+    branches:
+      - 'main'
+      - 'releases/**'
+    tags:
+      - 'v.*'
+      - 'test'
 
 jobs:
   build:
