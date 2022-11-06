@@ -1,24 +1,27 @@
 import io
-from backend.app import app
+import os
+
+import pytest
+
+from server.app import app
 
 
-def test_index():
-    # Setup
-    client = app.test_client()
+@pytest.fixture
+def client():
+    return app.test_client()
 
+
+def test_index(client):
     # Execute
-    response = client.get("/",
-                          content_type="html/text")
+    response = client.get("/", content_type="html/text")
 
     # Assert
     assert response.status_code == 200
-    assert response.data == b"Hello, World!"
 
 
-def test_upload_text_stream():
+def test_upload_text_stream(client):
     # Setup
     file_name = "text_stream.txt"
-    client = app.test_client()
     data = {
         'file': (io.BytesIO(b"some text data"), file_name)
     }
@@ -31,10 +34,9 @@ def test_upload_text_stream():
     assert response.json["message"] == "Please provide valid image to upload"
 
 
-def test_upload_textfile():
+def test_upload_textfile(client):
     # Setup
     file = "files/text_file.txt"
-    client = app.test_client()
     data = {
         'file': (open(file, 'rb'), file)
     }
@@ -47,11 +49,10 @@ def test_upload_textfile():
     assert response.json["message"] == "Please provide valid image to upload"
 
 
-def test_upload_image_file():
+def test_upload_image_file(client):
     # Setup
     filename = "files/1.png"
     file = open(filename, 'rb')
-    client = app.test_client()
     data = {
         'file': (file, filename)
     }
@@ -63,10 +64,9 @@ def test_upload_image_file():
     assert response.status_code == 201
 
 
-def test_upload_image_stream():
+def test_upload_image_stream(client):
     # Setup
     image_name = "fake_image_stream.jpg"
-    client = app.test_client()
     data = {
         'file': (io.BytesIO(b"random_bytes"), image_name)
     }
@@ -76,4 +76,3 @@ def test_upload_image_stream():
 
     # Assert
     assert response.status_code == 201
-    assert response.json['file'] == image_name

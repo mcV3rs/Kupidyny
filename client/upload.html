@@ -1,14 +1,19 @@
 <!doctype html>
-<html lang="pl">
+<html>
   <head>
     <title>File Upload</title>
   </head>
   <body>
     <h1>File Upload</h1>
-    <form method="POST" action="http://127.0.0.1:5000/file/upload" enctype="multipart/form-data">
-      <p><input type="file" name="file" accept="image/*"></p>
+    <form method="POST" action="file/upload" enctype="multipart/form-data">
+      <p><input type="file" name="file"></p>
       <p><input type="submit" value="Submit"></p>
     </form>
+    <hr>
+
+    {% for file in files %}
+      <img src="{{ url_for('show_files', filename=file) }}" style="width: 64px">
+    {% endfor %}
 
   </body>
 </html>
