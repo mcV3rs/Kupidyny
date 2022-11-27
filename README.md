@@ -5,8 +5,6 @@ Politechnika Śląska 2022/2023.
 
 ## Instrukcja
 
----
-
 ### Instalacja
 
 Pobranie repozytorium:
