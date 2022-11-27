@@ -11,6 +11,6 @@ Repozytorium dla zadania projektowego na przedmiocie Inżynieria Oprogramowania,
 - [Mariusz Pyrk](https://github.com/MariuszPyrk)
 
 ## Status projektu
-Projekt jest aktualnie w fazie planowania.
+Projekt jest aktualnie w fazie wstępnego rozwoju.
 
 ---
