@@ -1,14 +1,4 @@
 import io
-import os
-
-import pytest
-
-from server.app import app
-
-
-@pytest.fixture
-def client():
-    return app.test_client()
 
 
 def test_index(client):
@@ -36,7 +26,7 @@ def test_upload_text_stream(client):
 
 def test_upload_textfile(client):
     # Setup
-    file = "files/text_file.txt"
+    file = "../files/text_file.txt"
     data = {
         'file': (open(file, 'rb'), file)
     }
@@ -51,14 +41,14 @@ def test_upload_textfile(client):
 
 def test_upload_image_file(client):
     # Setup
-    filename = "files/1.png"
+    filename = "../files/1.png"
     file = open(filename, 'rb')
     data = {
         'file': (file, filename)
     }
 
     # Execute
-    response = client.post('/file/upload', data=data)
+    response = client.post('../file/upload', data=data)
 
     # Assert
     assert response.status_code == 201
@@ -72,7 +62,7 @@ def test_upload_image_stream(client):
     }
 
     # Execute
-    response = client.post('/file/upload', data=data)
+    response = client.post('../file/upload', data=data)
 
     # Assert
     assert response.status_code == 201
