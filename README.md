@@ -50,6 +50,16 @@ Aktywacja serwera aplikacji w trybie deweloperskim:
 
 Aplikacja będzie dostępna pod adresem http://127.0.0.1:5000.
 
+---
+
+Aktywacja serwera aplikacji w trybie deweloperskim z dostępem z poziomu sieci lokalnej LAN:
+
+```sh
+(venv) $ flask --app app --debug run --host 0.0.0.0
+```
+
+Aplikacja będzie dostępna pod adresem http://127.0.0.1:5000 oraz http://<lokalny_adres_hosta>:5000
+
 ## Użyte pakiety
 
 * **Flask**: mikro-framework do tworzenia aplikacji sieciowych, wraz z następującymi zależnościami:

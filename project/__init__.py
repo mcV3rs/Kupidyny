@@ -60,9 +60,11 @@ def initialize_extensions(app):
 def register_blueprints(app):
     from project.recipes import recipes_blueprint
     from project.users import users_blueprint
+    from project.camera import camera_blueprint
 
     app.register_blueprint(recipes_blueprint)
     app.register_blueprint(users_blueprint)
+    app.register_blueprint(camera_blueprint)
 
 
 def configure_logging(app):

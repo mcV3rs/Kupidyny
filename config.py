@@ -4,6 +4,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    # Flask config variables
     FLASK_ENV = 'development'
     DEBUG = False
     TESTING = False
@@ -11,6 +12,7 @@ class Config(object):
     UPLOAD_PATH = os.path.join(BASEDIR, 'project/instance')
     UPLOAD_EXTENSIONS = ['.png', '.jpg', '.jpeg']
 
+    # Database config
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASEDIR, 'project/instance', 'app.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
