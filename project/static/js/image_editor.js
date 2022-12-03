@@ -1,6 +1,8 @@
 const container = document.getElementById("image-editor");
 const config = {
-    source: "https://scaleflex.cloudimg.io/v7/demo/river.png"
+    source: "https://scaleflex.cloudimg.io/v7/demo/river.png",
+    useBackendTranslations: true,
+    language: "pl"
 };
 const ImageEditor = new window.FilerobotImageEditor(container, config);
 
