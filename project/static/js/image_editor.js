@@ -1,21 +1,28 @@
+// TODO porządek w pliku
+
 const container = document.getElementById("image-editor");
-const img = document.querySelector('[data-image-editor-active-image=""]')
+
+const addImg = document.getElementById('add-image');
+const collection = document.getElementsByClassName("uploaded-img");
+let lastElement = Array.from(collection)[Array.from(collection).length - 1];
 
 const config = {
-    source: img.src,
+    source: lastElement.src,
     useBackendTranslations: true,
     language: "pl"
 };
 const ImageEditor = new window.FilerobotImageEditor(container, config);
 
-const addImg = document.getElementById('add-image');
-
 document.onreadystatechange = () => {
+    Array.from(collection).forEach(function (element) {
+        element.onclick = () => toggleActiveImage(element, element.src);
+    });
 
+    lastElement.setAttribute('data-image-editor-active-image', '');
+    ImageEditor.render({source: lastElement.src});
 };
 
 ImageEditor.render({
-    // additional config provided while rendering
     observePluginContainerSize: true,
     onSave: (imageInfo, designState) => {
         const tmpLink = document.createElement("a");
@@ -29,8 +36,6 @@ ImageEditor.render({
 });
 
 function toggleActiveImage(imageContainer, imageSrc) {
-    console.log("chuj")
-
     const removeResizeParamRegex = /\?.+/g;
     const imageUrl = imageSrc.replace(removeResizeParamRegex, '');
     const prevImageContainer = document.querySelector(

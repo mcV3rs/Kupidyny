@@ -13,7 +13,6 @@
         flex-wrap: wrap;
         row-gap: 6px;
         column-gap: 6px;
-        max-width: 170px;
         max-height: 106px;
         overflow-y: scroll;
         scrollbar-color: #dfe1ec #fff;
@@ -44,13 +43,6 @@
         cursor: pointer;
     }
 
-    .default-uploaded-img {
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
-
     .uploaded-img[data-image-editor-active-image=""] {
         border: 2px solid #3daba4;
         transition: border 250ms ease-in-out;
@@ -60,10 +52,8 @@
         width: 50px;
         height: 50px;
         border: 1px solid #dfe1ec;
-        background-color: #ffff;
         border-radius: 4px;
-        background: url("{{ url_for('static', filename='img/adding-icon.png') }}") center center;
-        background-repeat: no-repeat;
+        background: #ffff url("{{ url_for('static', filename='img/adding-icon.png') }}") no-repeat center center;
         padding-top: 49px;
         cursor: pointer;
     }
@@ -79,8 +69,6 @@
 
                     {% for file in files %}
                     <img class="uploaded-img"
-                         data-image-editor-active-image
-                         onclick="toggleActiveImage(img, '{{ url_for('recipes.download_file', filename=file) }}')"
                          src="{{ url_for('recipes.download_file', filename=file) }}">
                     {% endfor %}
 
@@ -90,7 +78,9 @@
                         class="add-img"
                         id="add-image"
                         name="image"
-                        type="file"/>
+                        multiple
+                        type="file"
+                />
             </div>
 
         </div>
