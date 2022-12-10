@@ -40,7 +40,7 @@
                 <li><a class="nav-link px-2 text-white" href="#">FAQs</a></li>
                 <li><a class="nav-link px-2 text-white" href="#">About</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a class="nav-link px-2 text-white" href="{{ url_for('camera.camera') }}">Edycja zdjęć</a></li>
+                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.photo_edit') }}">Edycja zdjęć</a></li>
                 {% endif %}
             </ul>
 
