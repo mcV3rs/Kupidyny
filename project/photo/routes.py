@@ -9,7 +9,7 @@ from ..models import File
 @photo_blueprint.route('/photo-edit')
 @login_required
 def photo_edit():
-    # Uploaded files
+    # Uploaded files, with record id DB
     files = File.query.all()
     return_paths = []
 

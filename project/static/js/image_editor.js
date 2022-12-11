@@ -1,11 +1,11 @@
-// TODO porządek w pliku
-
-const container = document.getElementById("image-editor");
-
+/* Constants variables */
+// Const for document elements
 const addImg = document.getElementById('add-image');
-const collection = document.getElementsByClassName("uploaded-img");
-let lastElement = Array.from(collection)[Array.from(collection).length - 1];
+const collection = Array.from(document.getElementsByClassName("uploaded-img"));
+const lastElement = Array.from(collection)[Array.from(collection).length - 1];
 
+// Const for File Robot Image Editor
+const container = document.getElementById("image-editor");
 const config = {
     source: lastElement.src,
     useBackendTranslations: true,
@@ -13,15 +13,20 @@ const config = {
 };
 const ImageEditor = new window.FilerobotImageEditor(container, config);
 
+/* Document main function */
 document.onreadystatechange = () => {
-    Array.from(collection).forEach(function (element) {
+    // Add event listener for pictures
+    collection.forEach(function (element) {
         element.onclick = () => toggleActiveImage(element, element.src);
     });
 
+    // Add data attribute for last picture and render it to editor
     lastElement.setAttribute('data-image-editor-active-image', '');
     ImageEditor.render({source: lastElement.src});
 };
 
+// TODO funkcja do opanowania
+/* Image Editor render and save function */
 ImageEditor.render({
     observePluginContainerSize: true,
     onSave: (imageInfo, designState) => {
@@ -35,6 +40,7 @@ ImageEditor.render({
     }
 });
 
+/* Functions */
 function toggleActiveImage(imageContainer, imageSrc) {
     const removeResizeParamRegex = /\?.+/g;
     const imageUrl = imageSrc.replace(removeResizeParamRegex, '');
@@ -52,7 +58,7 @@ function toggleActiveImage(imageContainer, imageSrc) {
 }
 
 function appendImageToContainer(imageSrc) {
-    const imagesWrapper = document.querySelector('.uploaded-imgs-wrapper');
+    const imagesWrapper = document.querySelector('.uploaded-imgs');
     const imageWrapper = document.createElement('img');
 
     imageWrapper.src = imageSrc;
@@ -95,4 +101,5 @@ function uploadImg(event) {
     ImageEditor.render({source: imageSrc});
 }
 
+/* Event listeners */
 addImg.addEventListener('change', uploadImg);

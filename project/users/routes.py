@@ -5,9 +5,8 @@ from flask import (current_app, flash, redirect, render_template, request,
                    url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 
-import project.functions as f
 from project import db
-from project.models import User
+from project.models import User, File
 from . import users_blueprint
 from .forms import LoginForm, RegisterForm
 
@@ -21,11 +20,14 @@ def profile():
     inspector = sa.inspect(engine)
 
     # Uploaded files settings
-    files = f.list_dir(current_app.config['UPLOAD_PATH'], current_app.config["UPLOAD_EXTENSIONS"])
-    current_app.logger.info(files)
+    files = File.query.all()
+    return_paths = []
+
+    for file in files:
+        return_paths.append(file.get_name())
 
     return render_template('users/profile.html',
-                           files=files,
+                           files=return_paths,
                            flask_env=current_app.config['FLASK_ENV'],
                            debug=current_app.config['DEBUG'],
                            testing=current_app.config['TESTING'],
