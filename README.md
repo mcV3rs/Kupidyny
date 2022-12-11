@@ -34,10 +34,11 @@ Instalacja wymaganych pakietów z wykorzystaniem pliku _requirements.txt_:
 
 ### Inicjalizacja bazy danych
 
-W celu poprawnego działania aplikacji wymagane jest utworzenie bazy danych SQLite
+W celu poprawnego działania aplikacji wymagane jest utworzenie bazy danych SQLite oraz dodanie dwóch rekordów
 
 ```sh
 (venv) $ flask init_db
+(venv) $ flask populate_db
 ```
 
 ### Aktywacja aplikacji

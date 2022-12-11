@@ -13,33 +13,6 @@ const config = {
 };
 const ImageEditor = new window.FilerobotImageEditor(container, config);
 
-/* Document main function */
-document.onreadystatechange = () => {
-    // Add event listener for pictures
-    collection.forEach(function (element) {
-        element.onclick = () => toggleActiveImage(element, element.src);
-    });
-
-    // Add data attribute for last picture and render it to editor
-    lastElement.setAttribute('data-image-editor-active-image', '');
-    ImageEditor.render({source: lastElement.src});
-};
-
-// TODO funkcja do opanowania
-/* Image Editor render and save function */
-ImageEditor.render({
-    observePluginContainerSize: true,
-    onSave: (imageInfo, designState) => {
-        const tmpLink = document.createElement("a");
-        tmpLink.download = imageInfo.fullName;
-        tmpLink.href = imageInfo.imageBase64;
-        tmpLink.style = "position: absolute; z-index: -111; visibility: none;";
-        document.body.appendChild(tmpLink);
-        tmpLink.click();
-        document.body.removeChild(tmpLink);
-    }
-});
-
 /* Functions */
 function toggleActiveImage(imageContainer, imageSrc) {
     const removeResizeParamRegex = /\?.+/g;
@@ -103,3 +76,31 @@ function uploadImg(event) {
 
 /* Event listeners */
 addImg.addEventListener('change', uploadImg);
+
+/* Document main function */
+document.onreadystatechange = () => {
+    // Add event listener for pictures
+    collection.forEach(function (element) {
+        element.onclick = () => toggleActiveImage(element, element.src);
+    });
+
+    // Add data attribute for last picture and render it to editor
+    lastElement.setAttribute('data-image-editor-active-image', '');
+    ImageEditor.render({source: lastElement.src});
+};
+
+
+// TODO funkcja do opanowania
+/* Image Editor render and save function */
+ImageEditor.render({
+    observePluginContainerSize: true,
+    onSave: (imageInfo, designState) => {
+        const tmpLink = document.createElement("a");
+        tmpLink.download = imageInfo.fullName;
+        tmpLink.href = imageInfo.imageBase64;
+        tmpLink.style = "position: absolute; z-index: -111; visibility: none;";
+        document.body.appendChild(tmpLink);
+        tmpLink.click();
+        document.body.removeChild(tmpLink);
+    }
+});

@@ -88,4 +88,22 @@ def register_cli_commands(app):
         """Initialize the database."""
         db.drop_all()
         db.create_all()
+        # Commit the changes for the users
+        db.session.commit()
+
         echo('Initialized the database!')
+
+    @app.cli.command('populate_db')
+    def initialize_database():
+        from .models import File
+
+        """Initialize the database."""
+        file1 = File(name='1.png')
+        file2 = File(name='2.jpg')
+        db.session.add(file1)
+        db.session.add(file2)
+
+        # Commit the changes for the users
+        db.session.commit()
+
+        echo('Populated the database!')
