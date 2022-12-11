@@ -8,7 +8,7 @@ class Config(object):
     FLASK_ENV = 'development'
     DEBUG = False
     TESTING = False
-    SECRET_KEY = os.getenv('SECRET_KEY', default='BAD_SECRET_KEY')
+    SECRET_KEY = os.getenv('SECRET_KEY', default='NO_SECRET_KEY')
     UPLOAD_PATH = os.path.join(BASEDIR, 'project/instance')
     UPLOAD_EXTENSIONS = ['.png', '.jpg', '.jpeg']
 

@@ -6,22 +6,8 @@ from flask_login import login_required
 from werkzeug.utils import secure_filename
 
 from . import recipes_blueprint
-
-
-class InvalidUsage(Exception):
-    status_code = 400
-
-    def __init__(self, message, status_code=400):
-        Exception.__init__(self)
-        self.error_message = message
-        if status_code is not None:
-            self.status_code = status_code
-
-    def to_dict(self):
-        return {
-            'message': self.error_message,
-            'error': True,
-        }
+from .. import db
+from ..models import File
 
 
 # Routes
@@ -51,5 +37,9 @@ def upload_file():
         path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
 
         uploaded_file.save(path)
+
+        new_file = File(name=filename)
+        db.session.add(new_file)
+        db.session.commit()
 
         return json.dumps({'success': True}), 201, {'ContentType': 'application/json'}
