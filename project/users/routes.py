@@ -20,7 +20,7 @@ def profile():
     engine = sa.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
     inspector = sa.inspect(engine)
 
-    # Uploaded files
+    # Uploaded files settings
     files = f.list_dir(current_app.config['UPLOAD_PATH'], current_app.config["UPLOAD_EXTENSIONS"])
     current_app.logger.info(files)
 

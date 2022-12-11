@@ -1,7 +1,7 @@
 import pytest
 
 from project import create_app, db
-from project.models import User
+from project.models import User, File
 
 
 # Fixtures
@@ -34,6 +34,11 @@ def init_database(test_client):
     db.session.add(user1)
     db.session.add(user2)
 
+    file1 = File(name='test_file1.png')
+    file2 = File(name='test_file2.png')
+    db.session.add(file1)
+    db.session.add(file2)
+
     # Commit the changes for the users
     db.session.commit()
 
@@ -61,3 +66,9 @@ def cli_test_client():
     runner = flask_app.test_cli_runner()
 
     yield runner
+
+
+@pytest.fixture(scope='module')
+def new_file():
+    file = File('test_file.png')
+    return file

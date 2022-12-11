@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from project import db
 
 
 class User(db.Model):
-
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -46,3 +46,24 @@ class User(db.Model):
 
     def get_id(self):
         return str(self.id)
+
+
+class File(db.Model):
+    __tablename__ = 'files'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    created_on = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, name: str):
+        self.name = secure_filename(name)
+        self.created_on = datetime.now()
+
+    def __repr__(self):
+        return f'<File: {self.name}>'
+
+    def get_id(self):
+        return str(self.id)
+
+    def get_name(self):
+        return str(self.name)

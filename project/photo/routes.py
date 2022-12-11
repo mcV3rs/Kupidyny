@@ -1,8 +1,8 @@
-from flask import (render_template, current_app)
+from flask import (render_template)
 from flask_login import login_required
 
-import project.functions as f
 from . import photo_blueprint
+from ..models import File
 
 
 # Routes
@@ -10,8 +10,11 @@ from . import photo_blueprint
 @login_required
 def photo_edit():
     # Uploaded files
-    files = f.list_dir(current_app.config['UPLOAD_PATH'], current_app.config["UPLOAD_EXTENSIONS"])
-    current_app.logger.info(files)
+    files = File.query.all()
+    return_paths = []
+
+    for file in files:
+        return_paths.append(file.get_name())
 
     return render_template('photo.html',
-                           files=files)
+                           files=return_paths)
