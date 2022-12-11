@@ -6,14 +6,6 @@ from project import db
 
 
 class User(db.Model):
-    """
-    Class that represents a user of the application
-
-    The following attributes of a user are stored in this table:
-        * email - email address of the user
-        * hashed password - hashed password
-        * registered_on - date & time that the user registered
-    """
 
     __tablename__ = 'users'
 
@@ -23,10 +15,6 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=True)
 
     def __init__(self, email: str, password_plaintext: str):
-        """
-        Create a new User object using the email address and hashing the
-        plaintext password using Werkzeug.Security.
-        """
         self.email = email
         self.password_hashed = self._generate_password_hash(password_plaintext)
         self.registered_on = datetime.now()
@@ -46,19 +34,15 @@ class User(db.Model):
 
     @property
     def is_authenticated(self):
-        """Return True if the user has been successfully registered."""
         return True
 
     @property
     def is_active(self):
-        """Always True, as all users are active."""
         return True
 
     @property
     def is_anonymous(self):
-        """Always False, as anonymous users aren't supported."""
         return False
 
     def get_id(self):
-        """Return the user ID as a unicode string (`str`)."""
         return str(self.id)

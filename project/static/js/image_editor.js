@@ -68,6 +68,24 @@ function appendImageToContainer(imageSrc) {
 }
 
 function uploadImg(event) {
+    const fd = new FormData();
+    fd.append('file', event.target.files[0])
+
+    const req = fetch('/file/upload', {
+        mode: 'no-cors',
+        method: 'post',
+        body: fd
+    });
+
+    req.then(function (response) {
+        if (!response.ok) {
+            console.log(response)
+        }
+    }, function (error) {
+        console.log(error)
+        console.error('failed due to network error or cross domain')
+    })
+
     const imageSrc = URL.createObjectURL(event.target.files[0]);
 
     const imageContainer = appendImageToContainer(imageSrc);

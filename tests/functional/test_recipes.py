@@ -47,3 +47,28 @@ def test_home_page_post_with_fixture(test_client):
     """
     response = test_client.post('/')
     assert response.status_code == 405
+
+
+def test_edit_files():
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/photo-edit' page is requested (GET)
+    THEN check that the response is 302 (redirect)
+    """
+    flask_app = create_app('flask_test.cfg')
+
+    # Create a test client using the Flask application configured for testing
+    with flask_app.test_client() as test_client:
+        response = test_client.get('/photo-edit')
+        assert response.status_code == 302
+
+
+def test_edit_files_with_fixture(test_client, init_database, login_default_user):
+    """
+    GIVEN a Flask application configured for testing with login user
+    WHEN the '/photo-edit' page is requested (GET)
+    THEN check that the response is valid
+    """
+    response = test_client.get('/photo-edit')
+
+    assert response.status_code == 200
