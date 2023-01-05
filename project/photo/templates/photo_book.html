@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link href="{{ url_for('static', filename='css/photo_book.css') }}" rel="stylesheet">
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      referrerpolicy="no-referrer" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="p-5 my-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h2 class="display-5 fw-bold">Zdjęcia</h2>
+
+            <div class="img-container">
+                <div class="imgs-wrapper">
+
+                    <div class="uploaded-imgs">
+                        {% for file in files %}
+                        <img class="uploaded-img"
+                             src="{{ url_for('recipes.download_file', filename=file) }}">
+                        {% endfor %}
+                    </div>
+
+                    <button class="generate-img" type="submit">
+                        <i class="fa-solid fa-camera-retro"></i>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <iframe class="w-100 book-preview" src="{{ url_for('photo.book_template') }}"></iframe>
+
+    </div>
+
+</main>
+{% endblock %}
+
+{% block scripting %}
+
+{% endblock %}

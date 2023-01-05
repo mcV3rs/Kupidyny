@@ -96,8 +96,14 @@ def register_cli_commands(app):
     @app.cli.command('populate_db')
     def initialize_database():
         from .models import File
+        from .models import User
 
-        """Initialize the database."""
+        """Initialize the database"""
+        # Add test admin user
+        user1 = User(email='admin@kupidyn.pl', password_plaintext='admin')
+        db.session.add(user1)
+
+        # Add sample pictures
         file1 = File(name='1.png')
         file2 = File(name='2.jpg')
         db.session.add(file1)

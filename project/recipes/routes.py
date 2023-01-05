@@ -17,7 +17,6 @@ def index():
 
 
 @recipes_blueprint.route('/file/<path:filename>')
-@login_required
 def download_file(filename):
     return send_from_directory(current_app.config['UPLOAD_PATH'], filename)
 

@@ -74,6 +74,7 @@ Aplikacja będzie dostępna pod adresem http://127.0.0.1:5000 oraz http://<lokal
 * **Flask-Login** - obsługa zarządzania użytkownikami (logowanie/wylogowanie) w Flask
 * **Flask-WTF** - uproszczenie formularzy w Flask
 * **flake8** - narzędzie do analizy statycznej
+* **pdfkit** - dodatek do narzędzia wkhtmltopdf do konwersji HTML na PDF za pomocą Webkit.
 
 Aplikacja została napisana z wykorzystaniem Pythona 3.10.
 

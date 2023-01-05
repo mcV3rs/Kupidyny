@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ names }} - Książka Weselna</title>
+    <link href="https://fonts.googleapis.com/css?family=Caveat|Quicksand&display=swap" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+
+    <style>
+        * {
+            font-family: 'Caveat', cursive;
+        }
+
+        html, body {
+            margin: 0;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .header {
+            background-image: url("{{ url_for('recipes.download_file', filename=hero_img,  _external=True) }}");
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: 50% 60%;
+            background-attachment: scroll;
+            background-size: cover;
+        }
+
+        .heading {
+            height: 100%;
+            color: #ffffff;
+            display: block;
+            font-size: 6em;
+            font-weight: normal;
+            text-shadow: 0 0 10px #000;
+        }
+
+        .heading-subtext {
+            color: #fff;
+            display: block;
+            font-size: .6em;
+        }
+
+        .section {
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 1em 2.4em;
+            text-align: center;
+        }
+
+        .sub-heading {
+            font-size: 3em;
+        }
+
+        .section-img {
+            width: 100%
+        }
+
+        hr {
+            width: 5%;
+            border-top: 2px solid grey;
+            border-radius: 59%;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+
+</head>
+<body>
+<header class="header">
+    <h1 class="heading">
+        {{ names }}
+        <span class="heading-subtext"> {{ date }} - {{ city }}</span>
+    </h1>
+</header>
+
+{% for file in files %}
+<div class="page-break"></div>
+
+<section class="section">
+    <h2 class="sub-heading">{{ file }}</h2>
+    <img alt="{{ file }}" class="section-img"
+         src="{{ url_for('recipes.download_file', filename=file,  _external=True) }}">
+</section>
+{% endfor %}
+
+</body>
+</html>
