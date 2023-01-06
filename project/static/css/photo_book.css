@@ -50,6 +50,10 @@
     background-color: #fff;
 }
 
+.generate-img i {
+    height: 100%;
+}
+
 .book-preview {
     height: 750px;
 }
