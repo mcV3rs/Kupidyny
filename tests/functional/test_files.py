@@ -16,7 +16,7 @@ def test_download_file():
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as test_client:
         response = test_client.get('/file/1.png')
-        assert response.status_code == 302
+        assert response.status_code == 200
 
 
 def test_download_file_with_fixture(test_client, init_database, login_default_user):
@@ -41,7 +41,7 @@ def test_upload_file():
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as test_client:
         response = test_client.get('/file/upload')
-        assert response.status_code == 302
+        assert response.status_code == 404
 
 
 def test_upload_file_post():

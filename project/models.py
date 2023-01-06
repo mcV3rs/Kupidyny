@@ -1,5 +1,7 @@
 from datetime import datetime
+from uuid import uuid4
 
+from websauna.system.model.columns import UUID
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
@@ -52,18 +54,66 @@ class File(db.Model):
     __tablename__ = 'files'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    path = db.Column(db.String, nullable=False)
+    wedding_id = db.Column(db.Integer, nullable=False)
+    guest_name = db.Column(db.String, nullable=False)
     created_on = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, name: str):
-        self.name = secure_filename(name)
+    def __init__(self, path: str, wedding_id: int, guest_name: str):
+        self.path = secure_filename(path)
+        self.wedding_id = wedding_id
+        self.guest_name = guest_name
         self.created_on = datetime.now()
 
     def __repr__(self):
-        return f'<File: {self.name}>'
+        return f'<File: {self.path}>'
 
     def get_id(self):
         return str(self.id)
 
-    def get_name(self):
-        return str(self.name)
+    def get_path(self):
+        return str(self.path)
+
+    def get_guest_name(self):
+        return str(self.guest_name)
+
+    def get_wedding_id(self):
+        return str(self.wedding_id)
+
+
+class Wedding(db.Model):
+    __tablename__ = 'weddings'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    wife = db.Column(db.String, nullable=False)
+    husband = db.Column(db.String, nullable=False)
+    city = db.Column(db.String, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    uuid = db.Column(UUID(as_uuid=True), default=uuid4)
+
+    def __init__(self, wife: str, husband: str, city: str, date: db.Date):
+        self.wife = wife
+        self.husband = husband
+        self.city = city
+        self.date = date
+
+    def __repr__(self):
+        return f'<Wedding: {self.id}, {self.wife}, {self.husband}, {self.city}, {self.date}>'
+
+    def get_id(self):
+        return str(self.id)
+
+    def get_wife(self):
+        return str(self.wife)
+
+    def get_husband(self):
+        return str(self.husband)
+
+    def get_city(self):
+        return str(self.city)
+
+    def get_uuid(self):
+        return str(self.uuid)
+
+    def get_date(self):
+        return str(self.date.strftime('%d.%m.%Y'))

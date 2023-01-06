@@ -16,3 +16,8 @@ MarkupSafe==2.1.1
 pyflakes==3.0.1
 flake8==6.0.0
 pdfkit==1.0.0
+websauna~=1.0a13
+Flask-OpenID==1.3.0
+PyVirtualDisplay==3.0
+selenium==4.7.2
+liveandletdie==0.0.8

@@ -11,29 +11,24 @@
             font-family: 'Caveat', cursive;
         }
 
-        html, body {
-            margin: 0;
-            height: 100vh;
-            text-align: center;
-        }
-
         .header {
             background-image: url("{{ url_for('recipes.download_file', filename=hero_img,  _external=True) }}");
+            height: 890px;
             background-repeat: no-repeat;
             background-position: 50% 60%;
             background-attachment: scroll;
             background-size: cover;
-            height: 40vh;
-            margin: 0;
-            padding-top: 60vh;
         }
 
         .heading {
+            height: 100%;
+            text-align: center;
             color: #ffffff;
             display: block;
             font-size: 6em;
             font-weight: normal;
             text-shadow: 0 0 10px #000;
+            padding-top: 600px;
         }
 
         .heading-subtext {
@@ -55,12 +50,6 @@
 
         .section-img {
             width: 100%
-        }
-
-        hr {
-            width: 5%;
-            border-top: 2px solid grey;
-            border-radius: 59%;
         }
 
         .page-break {

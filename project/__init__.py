@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 import sqlalchemy as sa
@@ -97,17 +98,28 @@ def register_cli_commands(app):
     def initialize_database():
         from .models import File
         from .models import User
+        from .models import Wedding
 
         """Initialize the database"""
         # Add test admin user
         user1 = User(email='admin@kupidyn.pl', password_plaintext='admin')
         db.session.add(user1)
 
-        # Add sample pictures
-        file1 = File(name='1.png')
-        file2 = File(name='2.jpg')
+        # Add test pictures
+        file1 = File(path='1.png', wedding_id=1, guest_name="Ciocia Ania")
+        file2 = File(path='2.jpg', wedding_id=1, guest_name="Asia")
+        file3 = File(path='3.jpg', wedding_id=2, guest_name="Marek")
+        file4 = File(path='4.jpg', wedding_id=2, guest_name="Babcia Jadzia")
         db.session.add(file1)
         db.session.add(file2)
+        db.session.add(file3)
+        db.session.add(file4)
+
+        # Add test wedding
+        wedding1 = Wedding(wife="Justyna", husband="Karol", city="Gliwice", date=datetime(2023, 1, 15))
+        wedding2 = Wedding(wife="Karolina", husband="Michał", city="Katowice", date=datetime(2023, 2, 13))
+        db.session.add(wedding1)
+        db.session.add(wedding2)
 
         # Commit the changes for the users
         db.session.commit()
