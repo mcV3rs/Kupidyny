@@ -83,5 +83,5 @@ def cli_test_client():
 
 @pytest.fixture(scope='module')
 def new_file():
-    file = File('test_file.png')
+    file = File('test_file.png', wedding_id=1, guest_name="Test")
     return file
