@@ -93,11 +93,11 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     path = db.Column(db.String, nullable=False)
-    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id), primary_key=True)
+    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id))
     guest_name = db.Column(db.String, nullable=False)
     created_on = db.Column(db.DateTime, nullable=False)
 
-    wedding = db.relationship('Wedding', foreign_keys='UserWedding.wedding_id')
+    wedding = db.relationship('Wedding', foreign_keys='File.wedding_id')
 
     def __init__(self, path: str, wedding_id: int, guest_name: str):
         self.path = secure_filename(path)

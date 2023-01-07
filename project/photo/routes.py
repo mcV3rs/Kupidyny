@@ -4,10 +4,11 @@ from zipfile import ZipFile
 
 import pdfkit
 from flask import (render_template, Response, redirect, url_for, send_file, current_app, after_this_request)
-from flask_login import login_required
+from flask_login import login_required, current_user
 
+import project.functions as f
 from . import photo_blueprint
-from ..models import File, Wedding
+from ..models import File, Wedding, UserWedding
 
 
 # TODO wyczyścić metody pobierania zdjęć z BD
@@ -22,13 +23,21 @@ def prepare_html(wedding_id):
     for row in files:
         return_paths[row.get_guest_name()] = row.get_path()
 
+    save_path = os.path.join(current_app.config['UPLOAD_PATH'],
+                             f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.html")
+
     # Get the HTML output
-    return render_template('book_template.html',
-                           hero_img="hero.jpeg",
-                           names=f"{wedding.get_wife()} & {wedding.get_husband()}",
-                           date=wedding.get_date(),
-                           city=wedding.get_city(),
-                           files=return_paths)
+    out = render_template('book_template_html.html',
+                          hero_img="hero.jpeg",
+                          names=f"{wedding.get_wife()} & {wedding.get_husband()}",
+                          date=wedding.get_date(),
+                          city=wedding.get_city(),
+                          files=return_paths)
+
+    with open(save_path, "w", encoding="utf-8") as file:
+        file.write(out)
+
+    return save_path
 
 
 def prepare_pdf(wedding_id):
@@ -86,24 +95,40 @@ def photo_edit():
 @photo_blueprint.route('/photo-book')
 @login_required
 def photo_book():
-    # Uploaded files, with record id DB
-    files = File.query.all()
-    return_paths = []
+    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
 
-    for file in files:
-        return_paths.append(file.get_path())
-
-    return render_template('photo_book.html',
-                           files=return_paths)
+    if user_wedding is None:
+        return render_template('photo_book.html',
+                               files=f.get_photos(),
+                               wedding_id=1)
+    else:
+        return render_template('photo_book.html',
+                               files=f.get_photos(user_wedding.wedding.get_id()),
+                               wedding_id=user_wedding.wedding.id)
 
 
 @photo_blueprint.route('/download/html/<int:wedding_id>')
 def download_html_book(wedding_id):
+    @after_this_request
+    def remove_file(response):
+        try:
+            os.remove(file_path)
+        except Exception as error:
+            current_app.logger.error("Error removing or closing downloaded file handle", error)
+        return response
+
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
+        file_path = prepare_html(wedding_id)
+
+        return_data = io.BytesIO()
+        with open(file_path, 'rb') as fo:
+            return_data.write(fo.read())
+        return_data.seek(0)
+
         return send_file(
-            prepare_html(wedding_id),
+            return_data,
             mimetype='text/html',
             download_name=f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.html",
             as_attachment=True
@@ -159,7 +184,8 @@ def download_zip_book(wedding_id):
         paths = {
             "zip": os.path.join(current_app.config['UPLOAD_PATH'],
                                 f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.zip"),
-            "pdf": prepare_pdf(wedding_id)
+            "pdf": prepare_pdf(wedding_id),
+            "html": prepare_html(wedding_id),
         }
 
         with ZipFile(paths["zip"], 'w') as zip_file:
@@ -186,8 +212,20 @@ def download_zip_book(wedding_id):
 def html_template(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
+    # Uploaded files, with record id DB
+    files = File.query.filter_by(wedding_id=wedding.get_id())
+    return_paths = {}
+
+    for row in files:
+        return_paths[row.get_guest_name()] = row.get_path()
+
     if wedding is not None:
-        return prepare_html(wedding_id)
+        return render_template('book_template.html',
+                               hero_img="hero.jpeg",
+                               names=f"{wedding.get_wife()} & {wedding.get_husband()}",
+                               date=wedding.get_date(),
+                               city=wedding.get_city(),
+                               files=return_paths)
     else:
         return redirect(url_for('recipes.index'))
 

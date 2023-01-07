@@ -23,14 +23,12 @@
                         {% endfor %}
                     </div>
 
-                    <!-- TODO HARDCODE numer wesela -->
-                    <a class="btn generate-img" href="{{ url_for('photo.download_html_book', wedding_id=1) }}"
+                    <a class="btn generate-img" href="{{ url_for('photo.download_html_book', wedding_id=wedding_id) }}"
                        role="button">
                         <i class="fa-solid fa-file-code"></i>
                     </a>
 
-                    <!-- TODO HARDCODE numer wesela -->
-                    <a class="btn generate-img" href="{{ url_for('photo.download_pdf_book', wedding_id=1) }}"
+                    <a class="btn generate-img" href="{{ url_for('photo.download_pdf_book', wedding_id=wedding_id) }}"
                        role="button">
                         <i class="fa-solid fa-file-pdf"></i>
                     </a>
@@ -43,8 +41,7 @@
                         <i class="fa-solid fa-file-arrow-down"></i>
                     </a>
 
-                    <!-- TODO HARDCODE numer wesela -->
-                    <a class="btn generate-img" href="{{ url_for('photo.download_zip_book', wedding_id=1) }}"
+                    <a class="btn generate-img" href="{{ url_for('photo.download_zip_book', wedding_id=wedding_id) }}"
                        role="button">
                         <i class="fa-solid fa-file-zipper"></i>
                     </a>
@@ -53,8 +50,7 @@
             </div>
         </div>
 
-        <!-- TODO HARDCODE numer wesela -->
-        <iframe class="w-100 book-preview" src="{{ url_for('photo.html_template', wedding_id=1) }}"></iframe>
+        <iframe class="w-100 book-preview" src="{{ url_for('photo.html_template', wedding_id=wedding_id) }}"></iframe>
 
     </div>
 

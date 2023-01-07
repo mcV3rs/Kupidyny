@@ -1,5 +1,7 @@
 import os
 
+from project.models import File
+
 
 def list_dir(path, extensions):
     """
@@ -16,3 +18,17 @@ def list_dir(path, extensions):
             file_list.append(f)
 
     return file_list
+
+
+def get_photos(wedding_id=None):
+    if wedding_id is None:
+        files = File.query.all()
+    else:
+        files = File.query.filter_by(wedding_id=wedding_id)
+
+    return_paths = []
+
+    for file in files:
+        return_paths.append(file.get_path())
+
+    return return_paths
