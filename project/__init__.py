@@ -8,6 +8,7 @@ from click import echo
 from flask import Flask
 from flask.logging import default_handler
 from flask_login import LoginManager
+from flask_qrcode import QRcode
 from flask_sqlalchemy import SQLAlchemy
 
 # Configuration
@@ -41,6 +42,8 @@ def create_app(config_filename=None):
             app.logger.info('Initialized the database!')
     else:
         app.logger.info('Database already contains the users table.')
+
+    QRcode(app)
 
     return app
 

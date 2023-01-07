@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container mb-5">
   <h1 class="my-2">Profil użytkownika</h1>
 
   <div class="row align-items-md-stretch">
@@ -67,22 +67,6 @@
       </div>
     </div>
 
-  </div>
-
-  <div class="p-5 my-4 bg-light rounded-3">
-    <div class="container-fluid py-5">
-      <h2 class="display-5 fw-bold">Wgrane grafiki</h2>
-
-      <div class="row text-center text-lg-start">
-        {% for file in files %}
-        <div class="col-lg-3 col-md-4 col-6">
-          <a class="d-block mb-4 h-100" href="{{ url_for('recipes.download_file', filename=file) }}" target="_blank">
-            <img alt="" class="img-fluid img-thumbnail" src="{{ url_for('recipes.download_file', filename=file) }}">
-          </a>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}

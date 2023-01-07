@@ -6,7 +6,7 @@ from flask import (current_app, flash, redirect, render_template, request,
 from flask_login import current_user, login_required, login_user, logout_user
 
 from project import db
-from project.models import User, File
+from project.models import User
 from . import users_blueprint
 from .forms import LoginForm, RegisterForm
 
@@ -19,15 +19,7 @@ def profile():
     engine = sa.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
     inspector = sa.inspect(engine)
 
-    # Uploaded files settings
-    files = File.query.all()
-    return_paths = []
-
-    for file in files:
-        return_paths.append(file.get_path())
-
     return render_template('users/profile.html',
-                           files=return_paths,
                            flask_env=current_app.config['FLASK_ENV'],
                            debug=current_app.config['DEBUG'],
                            testing=current_app.config['TESTING'],

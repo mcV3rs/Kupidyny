@@ -3,7 +3,7 @@ import os
 from zipfile import ZipFile
 
 import pdfkit
-from flask import (render_template, Response, redirect, url_for, send_file, current_app, after_this_request)
+from flask import (render_template, redirect, url_for, send_file, current_app, after_this_request)
 from flask_login import login_required, current_user
 
 import project.functions as f
@@ -11,20 +11,9 @@ from . import photo_blueprint
 from ..models import File, Wedding, UserWedding
 
 
-# TODO wyczyścić metody pobierania zdjęć z BD
 # TODO Dodać obsługę zdjęcia hero dla albumu
 def prepare_html(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
-
-    # Uploaded files, with record id DB
-    files = File.query.filter_by(wedding_id=wedding.get_id())
-    return_paths = {}
-
-    for row in files:
-        return_paths[row.get_guest_name()] = row.get_path()
-
-    save_path = os.path.join(current_app.config['UPLOAD_PATH'],
-                             f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.html")
 
     # Get the HTML output
     out = render_template('book_template_html.html',
@@ -32,7 +21,10 @@ def prepare_html(wedding_id):
                           names=f"{wedding.get_wife()} & {wedding.get_husband()}",
                           date=wedding.get_date(),
                           city=wedding.get_city(),
-                          files=return_paths)
+                          files=f.get_photos_with_names(wedding.get_id()))
+
+    save_path = os.path.join(current_app.config['UPLOAD_PATH'],
+                             f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.html")
 
     with open(save_path, "w", encoding="utf-8") as file:
         file.write(out)
@@ -43,20 +35,13 @@ def prepare_html(wedding_id):
 def prepare_pdf(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
-    # Uploaded files, with record id DB
-    files = File.query.filter_by(wedding_id=wedding.get_id())
-    return_paths = {}
-
-    for row in files:
-        return_paths[row.get_guest_name()] = row.get_path()
-
     # Get the HTML output
     out = render_template('book_template_pdf.html',
                           hero_img="hero.jpeg",
                           names=f"{wedding.get_wife()} & {wedding.get_husband()}",
                           date=wedding.get_date(),
                           city=wedding.get_city(),
-                          files=return_paths)
+                          files=f.get_photos_with_names(wedding.get_id()))
 
     options = {
         "orientation": "landscape",
@@ -80,35 +65,60 @@ def prepare_pdf(wedding_id):
 @photo_blueprint.route('/photo-edit')
 @login_required
 def photo_edit():
-    # Uploaded files, with record id DB
-    files = File.query.all()
-    return_paths = []
-
-    for file in files:
-        return_paths.append(file.get_path())
-
+    """
+    Strona umożliwiająca edycję konkretnego zdjęcia do użytku przez parę weselną
+    """
+    # TODO zmiana tej funkcji pod edycję przez gości
     return render_template('photo.html',
-                           files=return_paths)
+                           files=f.get_photos())
 
 
 # TODO prawdopodobnie do usunięcia
-@photo_blueprint.route('/photo-book')
+@photo_blueprint.route('/book-edit')
 @login_required
-def photo_book():
+def book_edit():
+    """
+    Strona umożliwiająca wybór zdjęć do umieszczenia w albumie
+    """
     user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
 
     if user_wedding is None:
-        return render_template('photo_book.html',
-                               files=f.get_photos(),
-                               wedding_id=1)
+        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        return redirect(url_for('recipes.index'))
     else:
         return render_template('photo_book.html',
                                files=f.get_photos(user_wedding.wedding.get_id()),
                                wedding_id=user_wedding.wedding.id)
 
 
+@photo_blueprint.route('/book/<int:wedding_id>')
+@login_required
+def book_preview(wedding_id):
+    """
+    Strona wyświetlająca aktualny wygląd albumu dla pary weselnej
+    """
+    wedding = Wedding.query.filter_by(id=wedding_id).first()
+
+    if wedding is not None:
+        return render_template('book_template.html',
+                               hero_img="hero.jpeg",
+                               names=f"{wedding.get_wife()} & {wedding.get_husband()}",
+                               date=wedding.get_date(),
+                               city=wedding.get_city(),
+                               files=f.get_photos_with_names(wedding.get_id()))
+    else:
+        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        return redirect(url_for('recipes.index'))
+
+
 @photo_blueprint.route('/download/html/<int:wedding_id>')
 def download_html_book(wedding_id):
+    """
+    Strona do pobierania pliku html
+    :param wedding_id:
+    :return:
+    """
+
     @after_this_request
     def remove_file(response):
         try:
@@ -139,6 +149,12 @@ def download_html_book(wedding_id):
 
 @photo_blueprint.route('/download/pdf/<int:wedding_id>')
 def download_pdf_book(wedding_id):
+    """
+    Strona do pobierania pliku pdf
+    :param wedding_id:
+    :return:
+    """
+
     @after_this_request
     def remove_file(response):
         try:
@@ -169,6 +185,12 @@ def download_pdf_book(wedding_id):
 
 @photo_blueprint.route('/download/zip/<int:wedding_id>')
 def download_zip_book(wedding_id):
+    """
+    Strona do pobierania pliku zip
+    :param wedding_id:
+    :return:
+    """
+
     @after_this_request
     def remove_file(response):
         try:
@@ -208,9 +230,31 @@ def download_zip_book(wedding_id):
         return redirect(url_for('recipes.index'))
 
 
-@photo_blueprint.route('/book/<int:wedding_id>')
-def html_template(wedding_id):
-    wedding = Wedding.query.filter_by(id=wedding_id).first()
+@photo_blueprint.route('/qr')
+def qr_guest():
+    """
+    Strona zawierająca QR kody dla gości
+    """
+    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
+
+    if user_wedding is None:
+        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        return redirect(url_for('recipes.index'))
+    else:
+        return render_template('qr_hub.html',
+                               files=f.get_photos(user_wedding.wedding.get_id()),
+                               wedding_id=user_wedding.wedding.id,
+                               wedding_uuid=user_wedding.wedding.get_uuid())
+
+
+"""
+Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
+"""
+
+
+@photo_blueprint.route('/wedding-book/<uuid:wedding_uuid>')
+def wedding_book_guest(wedding_uuid):
+    wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
 
     # Uploaded files, with record id DB
     files = File.query.filter_by(wedding_id=wedding.get_id())
@@ -230,41 +274,7 @@ def html_template(wedding_id):
         return redirect(url_for('recipes.index'))
 
 
-@photo_blueprint.route('/pdf/<uuid:wedding_uuid>')
-def pdf_book(wedding_uuid):
-    wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
-
-    if wedding is not None:
-        # Uploaded files, with record id DB
-        files = File.query.filter_by(wedding_id=wedding.get_id())
-        return_paths = {}
-
-        for row in files:
-            return_paths[row.get_guest_name()] = row.get_path()
-
-        # Get the HTML output
-        out = render_template('book_template_pdf.html',
-                              hero_img="hero.jpeg",
-                              names=f"{wedding.get_wife()} & {wedding.get_husband()}",
-                              date=wedding.get_date(),
-                              city=wedding.get_city(),
-                              files=return_paths)
-
-        options = {
-            "orientation": "landscape",
-            "page-size": "A4",
-            "margin-top": "1.0cm",
-            "margin-right": "1.0cm",
-            "margin-bottom": "1.0cm",
-            "margin-left": "1.0cm",
-            "encoding": "UTF-8",
-            "enable-local-file-access": True,
-        }
-
-        # Build PDF from HTML
-        pdf = pdfkit.from_string(out, options=options)
-
-        # Download the PDF
-        return Response(pdf, mimetype="application/pdf")
-    else:
-        return redirect(url_for('recipes.index'))
+@photo_blueprint.route('/add-picture/<uuid:wedding_uuid>')
+def add_picture_guest(wedding_uuid):
+    # TODO dodanie edycji zdjęć przez gościa
+    return redirect(url_for('recipes.index'))

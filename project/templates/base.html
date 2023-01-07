@@ -36,8 +36,8 @@
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a class="nav-link px-2 text-secondary" href="{{ url_for('recipes.index') }}">Home</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.photo_edit') }}">Edycja zdjęć</a></li>
-                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.photo_book') }}">Foto książka</a></li>
+                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.qr_guest') }}">Kody QR</a></li>
+                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.book_edit') }}">Foto książka</a></li>
                 {% endif %}
             </ul>
 

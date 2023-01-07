@@ -32,3 +32,17 @@ def get_photos(wedding_id=None):
         return_paths.append(file.get_path())
 
     return return_paths
+
+
+def get_photos_with_names(wedding_id=None):
+    if wedding_id is None:
+        files = File.query.all()
+    else:
+        files = File.query.filter_by(wedding_id=wedding_id)
+
+    return_paths = {}
+
+    for row in files:
+        return_paths[row.get_guest_name()] = row.get_path()
+
+    return return_paths
