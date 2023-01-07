@@ -24,7 +24,7 @@ def profile():
     return_paths = []
 
     for file in files:
-        return_paths.append(file.get_name())
+        return_paths.append(file.get_path())
 
     return render_template('users/profile.html',
                            files=return_paths,

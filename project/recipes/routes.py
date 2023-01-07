@@ -17,7 +17,6 @@ def index():
 
 
 @recipes_blueprint.route('/file/<path:filename>')
-@login_required
 def download_file(filename):
     return send_from_directory(current_app.config['UPLOAD_PATH'], filename)
 
@@ -38,7 +37,8 @@ def upload_file():
 
         uploaded_file.save(path)
 
-        new_file = File(name=filename)
+        # TODO hardcode wedding_id
+        new_file = File(path=filename, wedding_id=1)
         db.session.add(new_file)
         db.session.commit()
 
