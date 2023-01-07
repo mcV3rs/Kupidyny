@@ -50,37 +50,6 @@ class User(db.Model):
         return str(self.id)
 
 
-class File(db.Model):
-    __tablename__ = 'files'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    path = db.Column(db.String, nullable=False)
-    wedding_id = db.Column(db.Integer, nullable=False)
-    guest_name = db.Column(db.String, nullable=False)
-    created_on = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, path: str, wedding_id: int, guest_name: str):
-        self.path = secure_filename(path)
-        self.wedding_id = wedding_id
-        self.guest_name = guest_name
-        self.created_on = datetime.now()
-
-    def __repr__(self):
-        return f'<File: {self.path}>'
-
-    def get_id(self):
-        return str(self.id)
-
-    def get_path(self):
-        return str(self.path)
-
-    def get_guest_name(self):
-        return str(self.guest_name)
-
-    def get_wedding_id(self):
-        return str(self.wedding_id)
-
-
 class Wedding(db.Model):
     __tablename__ = 'weddings'
 
@@ -117,3 +86,59 @@ class Wedding(db.Model):
 
     def get_date(self):
         return str(self.date.strftime('%d.%m.%Y'))
+
+
+class File(db.Model):
+    __tablename__ = 'files'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    path = db.Column(db.String, nullable=False)
+    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id), primary_key=True)
+    guest_name = db.Column(db.String, nullable=False)
+    created_on = db.Column(db.DateTime, nullable=False)
+
+    wedding = db.relationship('Wedding', foreign_keys='UserWedding.wedding_id')
+
+    def __init__(self, path: str, wedding_id: int, guest_name: str):
+        self.path = secure_filename(path)
+        self.wedding_id = wedding_id
+        self.guest_name = guest_name
+        self.created_on = datetime.now()
+
+    def __repr__(self):
+        return f'<File: {self.path}>'
+
+    def get_id(self):
+        return str(self.id)
+
+    def get_path(self):
+        return str(self.path)
+
+    def get_guest_name(self):
+        return str(self.guest_name)
+
+    def get_wedding_id(self):
+        return str(self.wedding_id)
+
+
+class UserWedding(db.Model):
+    __tablename__ = 'users_weddings'
+
+    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
+
+    wedding = db.relationship('Wedding', foreign_keys='UserWedding.wedding_id')
+    user = db.relationship('User', foreign_keys='UserWedding.user_id')
+
+    def __init__(self, wedding_id: int, user_id: int):
+        self.wedding_id = wedding_id
+        self.user_id = user_id
+
+    def __repr__(self):
+        return f'<User_Wedding: {self.wedding_id}, {self.user_id}>'
+
+    def get_wedding_id(self):
+        return str(self.wedding_id)
+
+    def get_user_id(self):
+        return str(self.user_id)
