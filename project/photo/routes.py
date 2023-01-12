@@ -336,7 +336,6 @@ def qr_guest():
 Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
 """
 
-
 @photo_blueprint.route('/wedding-book/<uuid:wedding_uuid>')
 def wedding_book_guest(wedding_uuid):
     wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
@@ -361,6 +360,7 @@ def add_picture_guest(wedding_uuid):
 
     if wedding is not None:
         return render_template('add_picture.html',
+                               wedding=wedding,
                                names=f"{wedding.get_wife()} & {wedding.get_husband()}",
                                date=wedding.get_date(),
                                city=wedding.get_city(),
@@ -374,10 +374,7 @@ def edit_picture_guest(wedding_uuid):
     wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
 
     if wedding is not None:
-        uploaded_files = request.files.getlist('images')
-        print(uploaded_files)
-
-        uploaded_file = request.files['filepond']
+        uploaded_file = request.files['file']
         filename = secure_filename(uploaded_file.filename)
 
         if filename != '':
@@ -392,7 +389,9 @@ def edit_picture_guest(wedding_uuid):
 
             return render_template('edit_picture.html',
                                    path=path,
-                                   wedding_id=wedding.get_id())
+                                   wedding_id=wedding.get_id(),
+                                   img=filename,
+                                   wedding=wedding)
     else:
         # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
         return redirect(url_for('recipes.index'))

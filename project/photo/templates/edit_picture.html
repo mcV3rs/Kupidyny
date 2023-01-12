@@ -22,8 +22,22 @@
 </head>
 
 <body class="d-flex flex-column h-100">
+<header class="p-3 bg-dark text-white">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a class="nav-link px-2 text-secondary" href="{{ url_for('recipes.index') }}">Kupidyn Home</a></li>
+            </ul>
+
+            <span class="navbar-text">
+                {{ wedding.get_wife() }} & {{ wedding.get_husband() }} - {{ wedding.get_date() }}
+            </span>
+        </div>
+    </div>
+</header>
+
 <main class="content">
-    <main class="container">
+    <main class="container my-5">
         <div class="w-100" id="image-editor"></div>
     </main>
 </main>
@@ -46,7 +60,32 @@
 
 <!-- Additional Scripts -->
 <script src="https://scaleflex.cloudimg.io/v7/plugins/filerobot-image-editor/latest/filerobot-image-editor.min.js"></script>
-<script src="{{ url_for('static', filename='js/image_add.js') }}"></script>
+<script>
+    // Const for File Robot Image Editor
+    const container = document.getElementById("image-editor");
+    const config = {
+        source: "{{ url_for('recipes.download_file', filename=img, _external=True) }}",
+        useBackendTranslations: true,
+        language: "pl"
+    };
+    const ImageEditor = new window.FilerobotImageEditor(container, config);
+
+    // TODO funkcja do opanowania
+    /* Image Editor render and save function */
+    ImageEditor.render({
+        observePluginContainerSize: true,
+        onSave: (imageInfo, designState) => {
+            const tmpLink = document.createElement("a");
+            tmpLink.download = imageInfo.fullName;
+            tmpLink.href = imageInfo.imageBase64;
+            tmpLink.style = "position: absolute; z-index: -111; visibility: none;";
+            document.body.appendChild(tmpLink);
+            tmpLink.click();
+            document.body.removeChild(tmpLink);
+        }
+    });
+
+</script>
 
 </body>
 </html>
