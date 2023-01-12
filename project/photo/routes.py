@@ -73,7 +73,6 @@ def photo_edit():
                            files=f.get_photos())
 
 
-# TODO prawdopodobnie do usunięcia
 @photo_blueprint.route('/book-edit')
 @login_required
 def book_edit():
@@ -105,7 +104,8 @@ def book_preview(wedding_id):
                                names=f"{wedding.get_wife()} & {wedding.get_husband()}",
                                date=wedding.get_date(),
                                city=wedding.get_city(),
-                               files=f.get_photos_with_names(wedding.get_id()))
+                               files=f.get_photos_with_names(wedding.get_id()),
+                               show_download_bar=False)
     else:
         # TODO dodanie komunikatu o braku wesela dla aktualnego konta
         return redirect(url_for('recipes.index'))
@@ -256,21 +256,17 @@ Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
 def wedding_book_guest(wedding_uuid):
     wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
 
-    # Uploaded files, with record id DB
-    files = File.query.filter_by(wedding_id=wedding.get_id())
-    return_paths = {}
-
-    for row in files:
-        return_paths[row.get_guest_name()] = row.get_path()
-
     if wedding is not None:
         return render_template('book_template.html',
                                hero_img="hero.jpeg",
                                names=f"{wedding.get_wife()} & {wedding.get_husband()}",
                                date=wedding.get_date(),
                                city=wedding.get_city(),
-                               files=return_paths)
+                               files=f.get_photos_with_names(wedding.get_id()),
+                               show_download_bar=True,
+                               wedding_id=wedding.get_id())
     else:
+        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
         return redirect(url_for('recipes.index'))
 
 
