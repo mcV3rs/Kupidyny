@@ -37,7 +37,7 @@ def upload_file():
 
         uploaded_file.save(path)
 
-        # TODO hardcode wedding_id
+        # TODO hardcode wedding_id, dodanie zdjęć do konkretnego wesela
         new_file = File(path=filename, wedding_id=1)
         db.session.add(new_file)
         db.session.commit()

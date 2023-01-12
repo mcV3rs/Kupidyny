@@ -8,6 +8,7 @@ from click import echo
 from flask import Flask
 from flask.logging import default_handler
 from flask_login import LoginManager
+from flask_qrcode import QRcode
 from flask_sqlalchemy import SQLAlchemy
 
 # Configuration
@@ -41,6 +42,8 @@ def create_app(config_filename=None):
             app.logger.info('Initialized the database!')
     else:
         app.logger.info('Database already contains the users table.')
+
+    QRcode(app)
 
     return app
 
@@ -99,11 +102,16 @@ def register_cli_commands(app):
         from .models import File
         from .models import User
         from .models import Wedding
+        from .models import UserWedding
 
         """Initialize the database"""
         # Add test admin user
         user1 = User(email='admin@kupidyn.pl', password_plaintext='admin')
+        user2 = User(email='wesele1@kupidyn.pl', password_plaintext='wesele1')
+        user3 = User(email='wesele2@kupidyn.pl', password_plaintext='wesele2')
         db.session.add(user1)
+        db.session.add(user2)
+        db.session.add(user3)
 
         # Add test pictures
         file1 = File(path='1.png', wedding_id=1, guest_name="Ciocia Ania")
@@ -121,7 +129,23 @@ def register_cli_commands(app):
         db.session.add(wedding1)
         db.session.add(wedding2)
 
+        # Add test user wedding connection
+        con1 = UserWedding(wedding_id=1, user_id=2)
+        con2 = UserWedding(wedding_id=2, user_id=3)
+        db.session.add(con1)
+        db.session.add(con2)
+
         # Commit the changes for the users
         db.session.commit()
 
         echo('Populated the database!')
+
+    @app.cli.command('test_db')
+    def test_database():
+        from .models import File
+        from .models import User
+        from .models import Wedding
+        from .models import UserWedding
+
+        user_wedding = UserWedding.query.filter_by(user_id=2).first()
+        print(user_wedding.wedding.get_wife())
