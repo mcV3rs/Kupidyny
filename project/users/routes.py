@@ -1,21 +1,33 @@
+import datetime
 import os
 
 import sqlalchemy as sa
 from flask import (current_app, flash, redirect, render_template, request,
                    url_for)
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import update
 
 from project import db
-from project.models import User
+from project.models import User, UserWedding, Wedding
 from . import users_blueprint
 from .forms import LoginForm, RegisterForm
 
 
 # Routes
-@users_blueprint.route('/profile')
+@users_blueprint.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    # Database settings
+    # Zmiana danych wesela
+    if request.method == "POST":
+        user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
+        wedding = user_wedding.wedding
+        wedding.wife = request.form["wife"]
+        wedding.husband = request.form["husband"]
+        wedding.city = request.form["city"]
+        wedding.date = datetime.datetime.strptime(request.form["date"], "%Y-%m-%d").date()
+        db.session.commit()
+
+    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
     engine = sa.create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
     inspector = sa.inspect(engine)
 
@@ -26,7 +38,8 @@ def profile():
                            upload_path=current_app.config['UPLOAD_PATH'],
                            sqlalchemy_database_uri=current_app.config['SQLALCHEMY_DATABASE_URI'],
                            log_to_stdout=os.getenv('LOG_TO_STDOUT'),
-                           database_initialized=inspector.has_table("users")
+                           database_initialized=inspector.has_table("users"),
+                           wedding=user_wedding.wedding
                            )
 
 

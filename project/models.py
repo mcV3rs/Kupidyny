@@ -87,6 +87,9 @@ class Wedding(db.Model):
     def get_date(self):
         return str(self.date.strftime('%d.%m.%Y'))
 
+    def get_date_form(self):
+        return str(self.date.strftime('%Y-%m-%d'))
+
     def to_csv(self):
         column = [
             "wife",

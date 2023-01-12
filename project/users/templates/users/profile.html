@@ -1,72 +1,107 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mb-5">
-  <h1 class="my-2">Profil użytkownika</h1>
+    <div class="container mb-5">
+        <h1 class="my-2">Profil użytkownika</h1>
 
-  <div class="row align-items-md-stretch">
-    <div class="col-md-4">
-      <div class="h-100 p-5 text-white bg-dark rounded-3">
-        <h2>Konto</h2>
-        <p>Email: {{ current_user.email }}</p>
-        <p>Data utworzenia: {{ current_user.registered_on.strftime("%B %d, %Y") }}</p>
-      </div>
-    </div>
+        <div class="row align-items-md-stretch">
+            <div class="col-md-4">
+                <div class="h-100 p-5 text-white bg-dark rounded-3">
+                    <h2>Konto</h2>
+                    <p>Email: {{ current_user.email }}</p>
+                    <p>Data utworzenia: {{ current_user.registered_on.strftime("%d.%m.%Y") }}</p>
+                </div>
+            </div>
 
-    <div class="col-md-8">
-      <div class="h-100 p-5 bg-light border rounded-3">
-        <h2>Zmienne globalne oraz statusy</h2>
-        <div class="table-responsive">
-          <table class="table table-striped table-sm">
-            <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Key</th>
-              <th scope="col">Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>1</td>
-              <td>FLASK_ENV</td>
-              <td>{{ flask_env }}</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>DEBUG</td>
-              <td>{{ debug }}</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>TESTING</td>
-              <td>{{ testing }}</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>UPLOAD_PATH</td>
-              <td>{{ upload_path }}</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>SQLALCHEMY_DATABASE_URI</td>
-              <td>{{ sqlalchemy_database_uri }}</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>LOG_TO_STDOUT</td>
-              <td>{{ log_to_stdout }}</td>
-            </tr>
-            <tr>
-              <td>7</td>
-              <td>Database initialized</td>
-              <td>{{ database_initialized }}</td>
-            </tr>
-            </tbody>
-          </table>
+            <div class="col-md-8">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>Dane wesela</h2>
+
+
+                    <form action="{{ url_for("users.profile") }}" method="POST">
+                        <input type="text"
+                               id="wife"
+                               name="wife"
+                               placeholder="Żona"
+                               value="{{ wedding.get_wife() }}">
+
+                        <input type="text"
+                               id="husband"
+                               name="husband"
+                               placeholder="Mąż"
+                               value="{{ wedding.get_husband() }}">
+
+                        <input type="text"
+                               id="city"
+                               name="city"
+                               placeholder="Miejscowość"
+                               value="{{ wedding.get_city() }}">
+
+                        <input type="date"
+                               id="date"
+                               name="date"
+                               placeholder="Data"
+                               value="{{ wedding.get_date_form() }}">
+
+                        <button type="submit">Zapisz</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="h-100 p-5 bg-light border rounded-3 mt-4">
+                    <h2>Zmienne globalne oraz statusy</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Key</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>FLASK_ENV</td>
+                                <td>{{ flask_env }}</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>DEBUG</td>
+                                <td>{{ debug }}</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>TESTING</td>
+                                <td>{{ testing }}</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>UPLOAD_PATH</td>
+                                <td>{{ upload_path }}</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>SQLALCHEMY_DATABASE_URI</td>
+                                <td>{{ sqlalchemy_database_uri }}</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>LOG_TO_STDOUT</td>
+                                <td>{{ log_to_stdout }}</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Database initialized</td>
+                                <td>{{ database_initialized }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
     </div>
-
-  </div>
-</div>
 {% endblock %}
