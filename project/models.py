@@ -46,6 +46,14 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+    def is_configured(self):
+        wedding = UserWedding.query.filter_by(user_id=self.id).first().wedding
+
+        if wedding.get_wife() != "" and wedding.get_husband() != "" and wedding.get_city() != "":
+            return True
+        else:
+            return False
+
     def get_id(self):
         return str(self.id)
 
@@ -107,6 +115,7 @@ class Wedding(db.Model):
 
         return column, row
 
+
 class File(db.Model):
     __tablename__ = 'files'
 
@@ -145,7 +154,6 @@ class File(db.Model):
             "wedding_id",
             "guest_name"
         ]
-
 
     def get_csv_row(self):
         return [

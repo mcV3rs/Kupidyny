@@ -1,7 +1,6 @@
 import csv
 import io
 import os
-import shutil
 from zipfile import ZipFile
 
 import pdfkit
@@ -69,13 +68,13 @@ def prepare_cupid(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
     paths = {
         "zip": os.path.join(current_app.config['UPLOAD_PATH'],
-                            f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.zip"),
+                            f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.cupid"),
         "wedding": os.path.join(current_app.config['UPLOAD_PATH'],
-                             f"{wedding.get_wife()}_{wedding.get_husband()}_wedding.csv"),
+                                f"{wedding.get_wife()}_{wedding.get_husband()}_wedding.csv"),
         "files": os.path.join(current_app.config['UPLOAD_PATH'],
-                             f"{wedding.get_wife()}_{wedding.get_husband()}_files.csv"),
+                              f"{wedding.get_wife()}_{wedding.get_husband()}_files.csv"),
         "files_folder": os.path.join(current_app.config['UPLOAD_PATH'],
-                              f"{wedding.get_wife()}_{wedding.get_husband()}_files"),
+                                     f"{wedding.get_wife()}_{wedding.get_husband()}_files"),
     }
 
     # Zapisywanie danych dotyczących wesela
@@ -96,18 +95,18 @@ def prepare_cupid(wedding_id):
         for file in files:
             csvwriter.writerow(file.get_csv_row())
 
-
-
     with ZipFile(paths["zip"], 'w') as zip_file:
         for key in paths:
             if key != "zip" and key != "files_folder":
-                zip_file.write(paths[key], arcname=f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.csv")
+                zip_file.write(paths[key], arcname=f"{wedding.get_wife()}_{wedding.get_husband()}_{key}.csv")
+                os.remove(paths[key])
             elif key == "files_folder":
                 for file in files:
                     zip_file.write(os.path.join(current_app.config['UPLOAD_PATH'], file.get_path()),
-                                    arcname=f"files/{file.get_path()}")
+                                   arcname=f"files/{file.get_path()}")
 
     return paths["zip"]
+
 
 # Routes
 @photo_blueprint.route('/photo-edit')
@@ -157,6 +156,29 @@ def book_preview(wedding_id):
     else:
         # TODO dodanie komunikatu o braku wesela dla aktualnego konta
         return redirect(url_for('recipes.index'))
+
+
+@photo_blueprint.route('/import-book', methods=['POST'])
+@login_required
+def import_book():
+    if request.method == "POST":
+        # Odkodowanie pliku
+        data_cupid = request.files["cupid_file"]
+        filename = secure_filename(data_cupid.filename)
+        pre, ext = os.path.splitext(filename)
+        os.rename(filename, pre + "zip")
+
+        # Zapisanie pliku
+        path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
+        data_cupid.save(path)
+
+        with ZipFile(path, 'r') as zip_file:
+            zip_file.extractall(current_app.config['UPLOAD_PATH'])
+
+
+"""
+Obsługa pobierania - pobieranie książki w formatach
+"""
 
 
 @photo_blueprint.route('/download/html/<int:wedding_id>')
@@ -336,6 +358,7 @@ def qr_guest():
 Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
 """
 
+
 @photo_blueprint.route('/wedding-book/<uuid:wedding_uuid>')
 def wedding_book_guest(wedding_uuid):
     wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
@@ -369,6 +392,7 @@ def add_picture_guest(wedding_uuid):
         # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
         return redirect(url_for('recipes.index'))
 
+
 @photo_blueprint.route('/edit-picture/<uuid:wedding_uuid>', methods=['POST'])
 def edit_picture_guest(wedding_uuid):
     wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
@@ -395,4 +419,3 @@ def edit_picture_guest(wedding_uuid):
     else:
         # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
         return redirect(url_for('recipes.index'))
-
