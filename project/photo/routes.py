@@ -3,8 +3,9 @@ import os
 from zipfile import ZipFile
 
 import pdfkit
-from flask import (render_template, redirect, url_for, send_file, current_app, after_this_request)
+from flask import (render_template, redirect, url_for, send_file, current_app, after_this_request, request)
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 
 import project.functions as f
 from . import photo_blueprint
@@ -272,5 +273,43 @@ def wedding_book_guest(wedding_uuid):
 
 @photo_blueprint.route('/add-picture/<uuid:wedding_uuid>')
 def add_picture_guest(wedding_uuid):
-    # TODO dodanie edycji zdjęć przez gościa
-    return redirect(url_for('recipes.index'))
+    wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
+
+    if wedding is not None:
+        return render_template('add_picture.html',
+                               names=f"{wedding.get_wife()} & {wedding.get_husband()}",
+                               date=wedding.get_date(),
+                               city=wedding.get_city(),
+                               wedding_uuid=wedding.get_uuid())
+    else:
+        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        return redirect(url_for('recipes.index'))
+
+@photo_blueprint.route('/edit-picture/<uuid:wedding_uuid>', methods=['POST'])
+def edit_picture_guest(wedding_uuid):
+    wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
+
+    if wedding is not None:
+        uploaded_files = request.files.getlist('images')
+        print(uploaded_files)
+
+        uploaded_file = request.files['filepond']
+        filename = secure_filename(uploaded_file.filename)
+
+        if filename != '':
+            file_ext = (os.path.splitext(filename)[1]).lower()
+
+            if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
+                # TODO dodanie komunikatu o niepoprawnym/uszkodzonym uploadzie
+                return redirect(url_for('recipes.index'))
+
+            path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
+            uploaded_file.save(path)
+
+            return render_template('edit_picture.html',
+                                   path=path,
+                                   wedding_id=wedding.get_id())
+    else:
+        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        return redirect(url_for('recipes.index'))
+
