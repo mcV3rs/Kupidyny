@@ -47,22 +47,22 @@ def profile():
 def register():
     # If the User is already logged in, don't allow them to try to register
     if current_user.is_authenticated:
-        flash('Jesteś już zalogowany!')
         return redirect(url_for('users.profile'))
 
     form = RegisterForm()
     if request.method == 'POST' and form.validate_on_submit():
         new_user = User(form.email.data, form.password.data)
-
-        current_app.logger.info(f"DEBUG001... DATABASE_URL environment variable: {os.getenv('DATABASE_URL')}")
-        current_app.logger.info(f"DEBUG002... CONFIG_TYPE environment variable: {os.getenv('CONFIG_TYPE')}")
-        current_app.logger.info(f"DEBUG003... SQLALCHEMY_DATABASE_URI: {current_app.config['SQLALCHEMY_DATABASE_URI']}")
-        current_app.logger.info(f"DEBUG004... LOG_TO_STDOUT environment variable: {os.getenv('LOG_TO_STDOUT')}")
+        new_wedding = Wedding("", "", "", datetime.date.today())
 
         db.session.add(new_user)
+        db.session.add(new_wedding)
         db.session.commit()
+
+        new_user_wedding = UserWedding(new_wedding.get_id(), new_user.get_id())
+        db.session.add(new_user_wedding)
+        db.session.commit()
+
         login_user(new_user)
-        flash('Dziękujemy za zarejestrowanie, {}!'.format(new_user.email))
         return redirect(url_for('users.profile'))
     return render_template('users/register.html', form=form)
 
@@ -71,7 +71,6 @@ def register():
 def login():
     # If the User is already logged in, don't allow them to try to log in again
     if current_user.is_authenticated:
-        flash('Jesteś już zalogowany!')
         return redirect(url_for('users.profile'))
 
     form = LoginForm()
@@ -83,10 +82,8 @@ def login():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=form.remember_me.data)
-                flash('Dziękujemy za zalogowanie, {}!'.format(current_user.email))
                 return redirect(url_for('users.profile'))
 
-        flash('Niepoprawne dane logowania')
     return render_template('users/login.html', form=form)
 
 
@@ -94,5 +91,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Do zobaczenia!')
     return redirect(url_for('recipes.index'))
