@@ -1,5 +1,7 @@
+import csv
 import io
 import os
+import shutil
 from zipfile import ZipFile
 
 import pdfkit
@@ -61,6 +63,51 @@ def prepare_pdf(wedding_id):
     pdfkit.from_string(out, save_path, options=options)
     return save_path
 
+
+def prepare_cupid(wedding_id):
+    # Przygotowanie ścieżek do plików
+    wedding = Wedding.query.filter_by(id=wedding_id).first()
+    paths = {
+        "zip": os.path.join(current_app.config['UPLOAD_PATH'],
+                            f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.zip"),
+        "wedding": os.path.join(current_app.config['UPLOAD_PATH'],
+                             f"{wedding.get_wife()}_{wedding.get_husband()}_wedding.csv"),
+        "files": os.path.join(current_app.config['UPLOAD_PATH'],
+                             f"{wedding.get_wife()}_{wedding.get_husband()}_files.csv"),
+        "files_folder": os.path.join(current_app.config['UPLOAD_PATH'],
+                              f"{wedding.get_wife()}_{wedding.get_husband()}_files"),
+    }
+
+    # Zapisywanie danych dotyczących wesela
+    with open(paths["wedding"], 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        columns, row = wedding.to_csv()
+
+        csvwriter.writerow(columns)
+        csvwriter.writerow(row)
+
+    # Zapisywanie danych dotyczących plików gości
+    files = File.query.filter_by(wedding_id=wedding.get_id())
+    with open(paths["files"], 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        columns = files[0].get_columns()
+
+        csvwriter.writerow(columns)
+        for file in files:
+            csvwriter.writerow(file.get_csv_row())
+
+
+
+    with ZipFile(paths["zip"], 'w') as zip_file:
+        for key in paths:
+            if key != "zip" and key != "files_folder":
+                zip_file.write(paths[key], arcname=f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.csv")
+            elif key == "files_folder":
+                for file in files:
+                    zip_file.write(os.path.join(current_app.config['UPLOAD_PATH'], file.get_path()),
+                                    arcname=f"files/{file.get_path()}")
+
+    return paths["zip"]
 
 # Routes
 @photo_blueprint.route('/photo-edit')
@@ -184,6 +231,42 @@ def download_pdf_book(wedding_id):
         return redirect(url_for('recipes.index'))
 
 
+@photo_blueprint.route('/download/cupid/<int:wedding_id>')
+def download_cupid_book(wedding_id):
+    """
+    Strona do pobierania pliku cupid
+    :param wedding_id:
+    :return:
+    """
+
+    @after_this_request
+    def remove_file(response):
+        try:
+            os.remove(file_path)
+        except Exception as error:
+            current_app.logger.error("Error removing or closing downloaded file handle", error)
+        return response
+
+    wedding = Wedding.query.filter_by(id=wedding_id).first()
+
+    if wedding is not None:
+        file_path = prepare_cupid(wedding_id)
+
+        return_data = io.BytesIO()
+        with open(file_path, 'rb') as fo:
+            return_data.write(fo.read())
+        return_data.seek(0)
+
+        return send_file(
+            return_data,
+            mimetype='application/cupid',
+            download_name=f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.cupid",
+            as_attachment=True
+        )
+    else:
+        return redirect(url_for('recipes.index'))
+
+
 @photo_blueprint.route('/download/zip/<int:wedding_id>')
 def download_zip_book(wedding_id):
     """
@@ -209,6 +292,7 @@ def download_zip_book(wedding_id):
                                 f"{wedding.get_wife()}_{wedding.get_husband()}_fotobook.zip"),
             "pdf": prepare_pdf(wedding_id),
             "html": prepare_html(wedding_id),
+            "cupid": prepare_cupid(wedding_id)
         }
 
         with ZipFile(paths["zip"], 'w') as zip_file:

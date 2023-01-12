@@ -87,6 +87,22 @@ class Wedding(db.Model):
     def get_date(self):
         return str(self.date.strftime('%d.%m.%Y'))
 
+    def to_csv(self):
+        column = [
+            "wife",
+            "husband",
+            "city",
+            "date",
+        ]
+
+        row = [
+            self.wife,
+            self.husband,
+            self.city,
+            self.date
+        ]
+
+        return column, row
 
 class File(db.Model):
     __tablename__ = 'files'
@@ -119,6 +135,21 @@ class File(db.Model):
 
     def get_wedding_id(self):
         return str(self.wedding_id)
+
+    def get_columns(self):
+        return [
+            "path",
+            "wedding_id",
+            "guest_name"
+        ]
+
+
+    def get_csv_row(self):
+        return [
+            self.path,
+            self.wedding_id,
+            self.guest_name
+        ]
 
 
 class UserWedding(db.Model):
