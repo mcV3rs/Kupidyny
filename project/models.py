@@ -151,14 +151,12 @@ class File(db.Model):
     def get_columns(self):
         return [
             "path",
-            "wedding_id",
             "guest_name"
         ]
 
     def get_csv_row(self):
         return [
             self.path,
-            self.wedding_id,
             self.guest_name
         ]
 

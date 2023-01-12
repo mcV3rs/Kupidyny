@@ -1,6 +1,8 @@
 import csv
+import datetime
 import io
 import os
+import shutil
 from zipfile import ZipFile
 
 import pdfkit
@@ -10,6 +12,7 @@ from werkzeug.utils import secure_filename
 
 import project.functions as f
 from . import photo_blueprint
+from .. import db
 from ..models import File, Wedding, UserWedding
 
 
@@ -78,7 +81,7 @@ def prepare_cupid(wedding_id):
     }
 
     # Zapisywanie danych dotyczących wesela
-    with open(paths["wedding"], 'w', newline='') as csvfile:
+    with open(paths["wedding"], 'w', newline='', encoding="utf-8") as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
         columns, row = wedding.to_csv()
 
@@ -87,7 +90,7 @@ def prepare_cupid(wedding_id):
 
     # Zapisywanie danych dotyczących plików gości
     files = File.query.filter_by(wedding_id=wedding.get_id())
-    with open(paths["files"], 'w', newline='') as csvfile:
+    with open(paths["files"], 'w', newline='', encoding="utf-8") as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
         columns = files[0].get_columns()
 
@@ -98,7 +101,7 @@ def prepare_cupid(wedding_id):
     with ZipFile(paths["zip"], 'w') as zip_file:
         for key in paths:
             if key != "zip" and key != "files_folder":
-                zip_file.write(paths[key], arcname=f"{wedding.get_wife()}_{wedding.get_husband()}_{key}.csv")
+                zip_file.write(paths[key], arcname=f"{key}.csv")
                 os.remove(paths[key])
             elif key == "files_folder":
                 for file in files:
@@ -161,19 +164,71 @@ def book_preview(wedding_id):
 @photo_blueprint.route('/import-book', methods=['POST'])
 @login_required
 def import_book():
+    # TODO try/catch
+
     if request.method == "POST":
         # Odkodowanie pliku
         data_cupid = request.files["cupid_file"]
-        filename = secure_filename(data_cupid.filename)
-        pre, ext = os.path.splitext(filename)
-        os.rename(filename, pre + "zip")
+        filename = "import_cupid.zip"
 
         # Zapisanie pliku
-        path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
-        data_cupid.save(path)
+        path = os.path.join(current_app.config['UPLOAD_PATH'], "import_cupid")
+        os.mkdir(path)
+        path1 = os.path.join(path, filename)
+        data_cupid.save(path1)
 
-        with ZipFile(path, 'r') as zip_file:
-            zip_file.extractall(current_app.config['UPLOAD_PATH'])
+        # Wypakowanie archiwum
+        with ZipFile(path1, 'r') as zip_file:
+            zip_file.extractall(path)
+        os.remove(path1)
+
+        # Import danych dotyczących wesela
+        wedding = UserWedding.query.filter_by(user_id=current_user.get_id()).first().wedding
+        with open(os.path.join(path, "wedding.csv"), 'r') as file:
+            dict_reader = csv.DictReader(file)
+            list_of_dict = list(dict_reader)
+
+            wedding.wife = list_of_dict[0]["wife"]
+            wedding.husband = list_of_dict[0]["husband"]
+            wedding.city = list_of_dict[0]["city"]
+            wedding.date = datetime.datetime.strptime(list_of_dict[0]["date"], "%Y-%m-%d").date()
+
+        # Import danych dotyczących zdjęć
+        with open(os.path.join(path, "files.csv"), 'r') as file:
+            dict_reader = csv.DictReader(file)
+            list_of_dict = list(dict_reader)
+
+            for row in list_of_dict:
+                new_file = File(path=row["path"], wedding_id=wedding.get_id(), guest_name=row["guest_name"])
+                db.session.add(new_file)
+
+        # Posprzątanie
+        files = os.listdir(os.path.join(path, "files"))
+        for file in files:
+            shutil.copy2(os.path.join(os.path.join(path, "files"), file),
+                         os.path.join(current_app.config['UPLOAD_PATH'], file))
+
+        shutil.rmtree(path)
+        db.session.commit()
+
+        return redirect(url_for('users.profile'))
+
+
+@photo_blueprint.route('/qr')
+def qr_guest():
+    """
+    Strona zawierająca QR kody dla gości
+    """
+    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
+
+    if user_wedding is None:
+        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        return redirect(url_for('recipes.index'))
+    else:
+        return render_template('qr_hub.html',
+                               files=f.get_photos(user_wedding.wedding.get_id()),
+                               wedding_id=user_wedding.wedding.id,
+                               wedding_uuid=user_wedding.wedding.get_uuid())
 
 
 """
@@ -335,24 +390,6 @@ def download_zip_book(wedding_id):
         )
     else:
         return redirect(url_for('recipes.index'))
-
-
-@photo_blueprint.route('/qr')
-def qr_guest():
-    """
-    Strona zawierająca QR kody dla gości
-    """
-    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
-
-    if user_wedding is None:
-        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
-        return redirect(url_for('recipes.index'))
-    else:
-        return render_template('qr_hub.html',
-                               files=f.get_photos(user_wedding.wedding.get_id()),
-                               wedding_id=user_wedding.wedding.id,
-                               wedding_uuid=user_wedding.wedding.get_uuid())
-
 
 """
 Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
