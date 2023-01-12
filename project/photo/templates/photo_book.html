@@ -16,12 +16,14 @@
             <div class="img-container">
                 <div class="imgs-wrapper">
 
+                    <!--
                     <div class="uploaded-imgs">
                         {% for file in files %}
                         <img class="uploaded-img"
                              src="{{ url_for('recipes.download_file', filename=file) }}">
                         {% endfor %}
                     </div>
+                    -->
 
                     <a class="btn generate-img" href="{{ url_for('photo.download_html_book', wedding_id=wedding_id) }}"
                        role="button">
