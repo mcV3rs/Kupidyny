@@ -207,8 +207,9 @@ def import_book():
             db.session.commit()
 
             return redirect(url_for('users.profile'))
-    except:
+    except BaseException as e:
         flash('Podczas operacji wystąpił błąd, proszę skontaktować się z serwisem')
+        current_app.logger.info(f"Import book failure: {e}")
         return redirect(url_for('recipes.index'))
 
 
@@ -339,8 +340,8 @@ def download_zip_book(wedding_id):
     @after_this_request
     def remove_file(response):
         try:
-            for key in paths:
-                os.remove(paths[key])
+            for extensions in paths:
+                os.remove(paths[extensions])
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response

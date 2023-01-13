@@ -5,13 +5,12 @@ import sqlalchemy as sa
 from flask import (current_app, flash, redirect, render_template, request,
                    url_for)
 from flask_login import current_user, login_required, login_user, logout_user
-from sqlalchemy import update
 
+import project.functions as fun
 from project import db
 from project.models import User, UserWedding, Wedding
 from . import users_blueprint
 from .forms import LoginForm, RegisterForm
-import project.functions as fun
 
 
 # Routes

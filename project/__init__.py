@@ -11,14 +11,15 @@ from flask_login import LoginManager
 from flask_qrcode import QRcode
 from flask_sqlalchemy import SQLAlchemy
 
-# Configuration
+# Configuration parameters
 db = SQLAlchemy()
 login = LoginManager()
 login.login_view = "users.login"
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-
-# Application Factory Function
+'''
+Application Factory Function
+'''
 def create_app(config_filename=None):
     # Create the Flask application
     app = Flask(__name__)
@@ -27,6 +28,7 @@ def create_app(config_filename=None):
     config_type = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object(config_type)
 
+    # Configure additional parts
     initialize_extensions(app)
     register_blueprints(app)
     configure_logging(app)
@@ -35,7 +37,10 @@ def create_app(config_filename=None):
     # Check if the database needs to be initialized
     engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     inspector = sa.inspect(engine)
-    if not inspector.has_table("users") or not inspector.has_table("files"):
+    if not inspector.has_table("users") \
+            or not inspector.has_table("files") \
+            or not inspector.has_table("weddings") \
+            or not inspector.has_table("users_weddings"):
         with app.app_context():
             db.drop_all()
             db.create_all()
@@ -98,20 +103,20 @@ def register_cli_commands(app):
         echo('Initialized the database!')
 
     @app.cli.command('populate_db')
-    def initialize_database():
+    def populate_database():
+        """Populate the database with sample data for production use only"""
         from .models import File
         from .models import User
         from .models import Wedding
         from .models import UserWedding
 
-        """Initialize the database"""
-        # Add test admin user
+        # Add test users
         user1 = User(email='wesele1@kupidyn.pl', password_plaintext='wesele1')
         user2 = User(email='wesele2@kupidyn.pl', password_plaintext='wesele2')
         db.session.add(user1)
         db.session.add(user2)
 
-        # Add test wedding
+        # Add test weddings
         wedding1 = Wedding(wife="Justyna", husband="Karol", city="Gliwice", date=datetime(2023, 1, 15))
         wedding2 = Wedding(wife="Karolina", husband="Michał", city="Katowice", date=datetime(2023, 2, 13))
         db.session.add(wedding1)

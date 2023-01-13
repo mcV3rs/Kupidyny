@@ -148,7 +148,8 @@ class File(db.Model):
     def get_wedding_id(self):
         return str(self.wedding_id)
 
-    def get_columns(self):
+    @staticmethod
+    def get_columns():
         return [
             "path",
             "guest_name"

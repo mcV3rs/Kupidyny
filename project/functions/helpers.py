@@ -1,26 +1,14 @@
-import os
-
 from project.models import File
 
 
-def list_dir(path, extensions):
+def get_photos(wedding_id: int = None) -> list[str]:
     """
-    Function that returns a list of found files whose extensions match those provided
+    Functions listing all pictures in location and returnint it as list of strings.
+    If additional parameter wedding_id is provided, then a function will only return a files connected to a given wedding
 
-    :param path: where the files will be searched
-    :param extensions: list of extensions to search for
+    :param wedding_id:
     :return:
     """
-    file_list = []
-    for f in os.listdir(path):
-        ext = os.path.splitext(f)[1]
-        if ext.lower() in extensions:
-            file_list.append(f)
-
-    return file_list
-
-
-def get_photos(wedding_id=None):
     if wedding_id is None:
         files = File.query.all()
     else:
@@ -34,11 +22,15 @@ def get_photos(wedding_id=None):
     return return_paths
 
 
-def get_photos_with_names(wedding_id=None):
-    if wedding_id is None:
-        files = File.query.all()
-    else:
-        files = File.query.filter_by(wedding_id=wedding_id)
+def get_photos_with_names(wedding_id: int) -> dict[str: str]:
+    """
+    Functions listing all pictures in location and returnint it as dictionary of filenames in DB and paths
+    If additional parameter wedding_id is provided, then a function will only return a files connected to a given wedding
+
+    :param wedding_id:
+    :return:
+    """
+    files = File.query.filter_by(wedding_id=wedding_id)
 
     return_paths = {}
 
