@@ -10,7 +10,7 @@ import time
 from zipfile import ZipFile
 
 import pdfkit
-from flask import (render_template, redirect, url_for, send_file, current_app, after_this_request, request)
+from flask import (render_template, redirect, url_for, send_file, current_app, after_this_request, request, flash)
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
@@ -115,17 +115,9 @@ def prepare_cupid(wedding_id):
     return paths["zip"]
 
 
-# Routes
-@photo_blueprint.route('/photo-edit')
-@login_required
-def photo_edit():
-    """
-    Strona umożliwiająca edycję konkretnego zdjęcia do użytku przez parę weselną
-    """
-    # TODO zmiana tej funkcji pod edycję przez gości
-    return render_template('photo.html',
-                           files=f.get_photos())
-
+'''
+Obsługa zalogowanego użytkownika
+'''
 
 @photo_blueprint.route('/book-edit')
 @login_required
@@ -136,7 +128,7 @@ def book_edit():
     user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
 
     if user_wedding is None:
-        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        flash('Dla aktualnego konta nie ma przypisanego wesela, proszę skontaktować się z serwisem')
         return redirect(url_for('recipes.index'))
     else:
         return render_template('photo_book.html',
@@ -161,61 +153,63 @@ def book_preview(wedding_id):
                                files=f.get_photos_with_names(wedding.get_id()),
                                show_download_bar=False)
     else:
-        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
 @photo_blueprint.route('/import-book', methods=['POST'])
 @login_required
 def import_book():
-    # TODO try/catch
+    try:
+        if request.method == "POST":
+            # Odkodowanie pliku
+            data_cupid = request.files["cupid_file"]
+            filename = "import_cupid.zip"
 
-    if request.method == "POST":
-        # Odkodowanie pliku
-        data_cupid = request.files["cupid_file"]
-        filename = "import_cupid.zip"
+            # Zapisanie pliku
+            path = os.path.join(current_app.config['UPLOAD_PATH'], "import_cupid")
+            os.mkdir(path)
+            path1 = os.path.join(path, filename)
+            data_cupid.save(path1)
 
-        # Zapisanie pliku
-        path = os.path.join(current_app.config['UPLOAD_PATH'], "import_cupid")
-        os.mkdir(path)
-        path1 = os.path.join(path, filename)
-        data_cupid.save(path1)
+            # Wypakowanie archiwum
+            with ZipFile(path1, 'r') as zip_file:
+                zip_file.extractall(path)
+            os.remove(path1)
 
-        # Wypakowanie archiwum
-        with ZipFile(path1, 'r') as zip_file:
-            zip_file.extractall(path)
-        os.remove(path1)
+            # Import danych dotyczących wesela
+            wedding = UserWedding.query.filter_by(user_id=current_user.get_id()).first().wedding
+            with open(os.path.join(path, "wedding.csv"), 'r') as file:
+                dict_reader = csv.DictReader(file)
+                list_of_dict = list(dict_reader)
 
-        # Import danych dotyczących wesela
-        wedding = UserWedding.query.filter_by(user_id=current_user.get_id()).first().wedding
-        with open(os.path.join(path, "wedding.csv"), 'r') as file:
-            dict_reader = csv.DictReader(file)
-            list_of_dict = list(dict_reader)
+                wedding.wife = list_of_dict[0]["wife"]
+                wedding.husband = list_of_dict[0]["husband"]
+                wedding.city = list_of_dict[0]["city"]
+                wedding.date = datetime.datetime.strptime(list_of_dict[0]["date"], "%Y-%m-%d").date()
 
-            wedding.wife = list_of_dict[0]["wife"]
-            wedding.husband = list_of_dict[0]["husband"]
-            wedding.city = list_of_dict[0]["city"]
-            wedding.date = datetime.datetime.strptime(list_of_dict[0]["date"], "%Y-%m-%d").date()
+            # Import danych dotyczących zdjęć
+            with open(os.path.join(path, "files.csv"), 'r') as file:
+                dict_reader = csv.DictReader(file)
+                list_of_dict = list(dict_reader)
 
-        # Import danych dotyczących zdjęć
-        with open(os.path.join(path, "files.csv"), 'r') as file:
-            dict_reader = csv.DictReader(file)
-            list_of_dict = list(dict_reader)
+                for row in list_of_dict:
+                    new_file = File(path=row["path"], wedding_id=wedding.get_id(), guest_name=row["guest_name"])
+                    db.session.add(new_file)
 
-            for row in list_of_dict:
-                new_file = File(path=row["path"], wedding_id=wedding.get_id(), guest_name=row["guest_name"])
-                db.session.add(new_file)
+            # Posprzątanie
+            files = os.listdir(os.path.join(path, "files"))
+            for file in files:
+                shutil.copy2(os.path.join(os.path.join(path, "files"), file),
+                             os.path.join(current_app.config['UPLOAD_PATH'], file))
 
-        # Posprzątanie
-        files = os.listdir(os.path.join(path, "files"))
-        for file in files:
-            shutil.copy2(os.path.join(os.path.join(path, "files"), file),
-                         os.path.join(current_app.config['UPLOAD_PATH'], file))
+            shutil.rmtree(path)
+            db.session.commit()
 
-        shutil.rmtree(path)
-        db.session.commit()
-
-        return redirect(url_for('users.profile'))
+            return redirect(url_for('users.profile'))
+    except:
+        flash('Podczas operacji wystąpił błąd, proszę skontaktować się z serwisem')
+        return redirect(url_for('recipes.index'))
 
 
 @photo_blueprint.route('/qr')
@@ -226,7 +220,7 @@ def qr_guest():
     user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
 
     if user_wedding is None:
-        # TODO dodanie komunikatu o braku wesela dla aktualnego konta
+        flash('Dla aktualnego konta nie ma przypisanego wesela, proszę skontaktować się z serwisem')
         return redirect(url_for('recipes.index'))
     else:
         return render_template('qr_hub.html',
@@ -273,6 +267,7 @@ def download_html_book(wedding_id):
             as_attachment=True
         )
     else:
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -309,6 +304,7 @@ def download_pdf_book(wedding_id):
             as_attachment=True
         )
     else:
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -345,6 +341,7 @@ def download_cupid_book(wedding_id):
             as_attachment=True
         )
     else:
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -393,6 +390,7 @@ def download_zip_book(wedding_id):
             as_attachment=True
         )
     else:
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -415,7 +413,7 @@ def wedding_book_guest(wedding_uuid):
                                show_download_bar=True,
                                wedding_id=wedding.get_id())
     else:
-        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -431,7 +429,7 @@ def add_picture_guest(wedding_uuid):
                                city=wedding.get_city(),
                                wedding_uuid=wedding.get_uuid())
     else:
-        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -447,7 +445,7 @@ def edit_picture_guest(wedding_uuid):
             file_ext = (os.path.splitext(filename)[1]).lower()
 
             if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
-                # TODO dodanie komunikatu o niepoprawnym/uszkodzonym uploadzie
+                flash('Nieudane wgranie pliku, możliwe, że użyte rozszerzenie nie jest wspierane przez serwis')
                 return redirect(url_for('recipes.index'))
 
             path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
@@ -459,7 +457,7 @@ def edit_picture_guest(wedding_uuid):
                                    img=filename,
                                    wedding=wedding)
     else:
-        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        flash('Niepoprawny lub uszkodzony link')
         return redirect(url_for('recipes.index'))
 
 
@@ -490,8 +488,12 @@ def upload_file_guest(wedding_uuid):
             with open(path, "wb") as fh:
                 fh.write(uploaded_file)
 
-            # TODO dodanie komunikatu o sukcesie
-            return json.dumps({'success': True}), 201, {'ContentType': 'application/json'}
+            return json.dumps({
+                'success': True,
+                'message': 'Success'
+            }), 201, {'ContentType': 'application/json'}
     else:
-        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
-        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
+        return json.dumps({
+            'success': False,
+            'message': 'Wedding not found or link is broken'
+        }), 400, {'ContentType': 'application/json'}

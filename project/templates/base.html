@@ -36,34 +36,51 @@
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a class="nav-link px-2 text-white" href="{{ url_for('recipes.index') }}">Home</a></li>
                 {% if current_user.is_authenticated and current_user.is_configured() %}
-                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.qr_guest') }}">Kody QR</a></li>
-                <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.book_edit') }}">Foto książka</a></li>
+                    <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.qr_guest') }}">Kody QR</a></li>
+                    <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.book_edit') }}">Foto książka</a>
+                    </li>
                 {% elif current_user.is_authenticated %}
-                <li><a class="nav-link px-2 text-secondary" disabled="true" href="#">Kody QR</a></li>
-                <li><a class="nav-link px-2 text-secondary" disabled="true" href="#">Foto książka</a></li>
+                    <li><a class="nav-link px-2 text-secondary" disabled="true" href="#">Kody QR</a></li>
+                    <li><a class="nav-link px-2 text-secondary" disabled="true" href="#">Foto książka</a></li>
                 {% endif %}
             </ul>
 
             <div class="text-end">
                 {% if current_user.is_authenticated %}
-                <a class="btn btn-outline-light me-2" href="{{ url_for('users.profile') }}" role="button">
-                    Profil
-                </a>
-                <a class="btn btn-warning" href="{{ url_for('users.logout') }}" role="button">
-                    Wyloguj
-                </a>
+                    <a class="btn btn-outline-light me-2" href="{{ url_for('users.profile') }}" role="button">
+                        Profil
+                    </a>
+                    <a class="btn btn-warning" href="{{ url_for('users.logout') }}" role="button">
+                        Wyloguj
+                    </a>
                 {% else %}
-                <a class="btn btn-outline-light me-2" href="{{ url_for('users.login') }}" role="button">
-                    Logowanie
-                </a>
-                <a class="btn btn-warning" href="{{ url_for('users.register') }}" role="button">
-                    Rejestrowanie
-                </a>
+                    <a class="btn btn-outline-light me-2" href="{{ url_for('users.login') }}" role="button">
+                        Logowanie
+                    </a>
+                    <a class="btn btn-warning" href="{{ url_for('users.register') }}" role="button">
+                        Rejestrowanie
+                    </a>
                 {% endif %}
             </div>
         </div>
     </div>
 </header>
+
+<div class="messages">
+    {% for message in get_flashed_messages() %}
+        <div class="flash-message">
+            <p>{{ message }}</p>
+            <span class="close-btn" onclick="this.parentElement.style.opacity=0;">
+                <svg width="12" height="12" version="1.1" viewBox="0 0 100 100"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="m49.941 35.891 33.531-33.531 14.168 14.168-33.531 33.414 33.531 33.531-14.168 14.168-33.531-33.531-33.414 33.531-14.168-14.168 33.531-33.531-33.531-33.414 14.168-14.168z"
+                          fill-rule="evenodd" fill="currentColor"></path>
+                </svg>
+            </span>
+        </div>
+    {% endfor %}
+</div>
+
 
 <main class="content">
     {% block content %}
