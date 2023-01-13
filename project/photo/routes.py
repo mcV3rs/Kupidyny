@@ -1,8 +1,12 @@
+import base64
 import csv
 import datetime
 import io
+import json
 import os
+import re
 import shutil
+import time
 from zipfile import ZipFile
 
 import pdfkit
@@ -391,6 +395,7 @@ def download_zip_book(wedding_id):
     else:
         return redirect(url_for('recipes.index'))
 
+
 """
 Obsługa gości - wyświetlanie albumu oraz dodawanie zdjęć
 """
@@ -456,3 +461,37 @@ def edit_picture_guest(wedding_uuid):
     else:
         # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
         return redirect(url_for('recipes.index'))
+
+
+@photo_blueprint.route('/save_picture/<uuid:wedding_uuid>', methods=['POST'])
+def upload_file_guest(wedding_uuid):
+    wedding = Wedding.query.filter_by(uuid=wedding_uuid).first()
+
+    if wedding is not None:
+        image_data = re.sub('^data:image/.+;base64,', '', request.form['image'])
+        extension = request.form["extension"]
+
+        uploaded_file = base64.b64decode(image_data)
+        filename = f"{int(time.time())}.{extension}"
+
+        if filename != '':
+            file_ext = (os.path.splitext(filename)[1]).lower()
+
+            if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
+                return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
+
+            path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
+
+            # TODO hardcode guest_name
+            new_file = File(path=filename, wedding_id=wedding.get_id(), guest_name="Ciocia Ania")
+            db.session.add(new_file)
+            db.session.commit()
+
+            with open(path, "wb") as fh:
+                fh.write(uploaded_file)
+
+            # TODO dodanie komunikatu o sukcesie
+            return json.dumps({'success': True}), 201, {'ContentType': 'application/json'}
+    else:
+        # TODO dodanie komunikatu o niepoprawnym/uszkodzonym linku
+        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}

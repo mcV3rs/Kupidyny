@@ -66,7 +66,9 @@
     const config = {
         source: "{{ url_for('recipes.download_file', filename=img, _external=True) }}",
         useBackendTranslations: true,
-        language: "pl"
+        language: "pl",
+        onSave: (editedImageObject, designState) =>
+            console.log('saved', editedImageObject, designState),
     };
     const ImageEditor = new window.FilerobotImageEditor(container, config);
 
@@ -75,13 +77,24 @@
     ImageEditor.render({
         observePluginContainerSize: true,
         onSave: (imageInfo, designState) => {
-            const tmpLink = document.createElement("a");
-            tmpLink.download = imageInfo.fullName;
-            tmpLink.href = imageInfo.imageBase64;
-            tmpLink.style = "position: absolute; z-index: -111; visibility: none;";
-            document.body.appendChild(tmpLink);
-            tmpLink.click();
-            document.body.removeChild(tmpLink);
+            const fd = new FormData();
+            fd.append('image', imageInfo.imageBase64)
+            fd.append('extension', imageInfo.extension)
+
+            const req = fetch('/save_picture/{{ wedding.get_uuid() }}', {
+                mode: 'no-cors',
+                method: 'post',
+                body: fd
+            });
+
+            req.then(function (response) {
+                if (!response.ok) {
+                    console.log(response)
+                }
+            }, function (error) {
+                console.log(error)
+                console.error('failed due to network error or cross domain')
+            })
         }
     });
 
