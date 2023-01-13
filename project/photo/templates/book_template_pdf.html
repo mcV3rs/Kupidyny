@@ -12,7 +12,7 @@
         }
 
         .header {
-            background-image: url("{{ url_for('recipes.download_file', filename=hero_img,  _external=True) }}");
+            background-image: url("{{ url_for('static', filename='img/hero.jpeg',  _external=True) }}");
             height: 890px;
             background-repeat: no-repeat;
             background-position: 50% 60%;

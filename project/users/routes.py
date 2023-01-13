@@ -11,6 +11,7 @@ from project import db
 from project.models import User, UserWedding, Wedding
 from . import users_blueprint
 from .forms import LoginForm, RegisterForm
+import project.functions as fun
 
 
 # Routes
@@ -41,6 +42,23 @@ def profile():
                            database_initialized=inspector.has_table("users"),
                            wedding=user_wedding.wedding
                            )
+
+
+@users_blueprint.route('/qr')
+def qr_hub():
+    """
+    Strona zawierająca QR kody
+    """
+    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
+
+    if user_wedding is None:
+        flash('Dla aktualnego konta nie ma przypisanego wesela, proszę skontaktować się z serwisem')
+        return redirect(url_for('users.profile'))
+    else:
+        return render_template('qr_hub.html',
+                               files=fun.get_photos(user_wedding.wedding.get_id()),
+                               wedding_id=user_wedding.wedding.id,
+                               wedding_uuid=user_wedding.wedding.get_uuid())
 
 
 @users_blueprint.route('/register', methods=['GET', 'POST'])

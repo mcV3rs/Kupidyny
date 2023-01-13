@@ -111,16 +111,6 @@ def register_cli_commands(app):
         db.session.add(user1)
         db.session.add(user2)
 
-        # Add test pictures
-        file1 = File(path='1.png', wedding_id=1, guest_name="Ciocia Ania")
-        file2 = File(path='2.jpg', wedding_id=1, guest_name="Asia")
-        file3 = File(path='3.jpg', wedding_id=2, guest_name="Marek")
-        file4 = File(path='4.jpg', wedding_id=2, guest_name="Babcia Jadzia")
-        db.session.add(file1)
-        db.session.add(file2)
-        db.session.add(file3)
-        db.session.add(file4)
-
         # Add test wedding
         wedding1 = Wedding(wife="Justyna", husband="Karol", city="Gliwice", date=datetime(2023, 1, 15))
         wedding2 = Wedding(wife="Karolina", husband="Michał", city="Katowice", date=datetime(2023, 2, 13))
@@ -137,13 +127,3 @@ def register_cli_commands(app):
         db.session.commit()
 
         echo('Populated the database!')
-
-    @app.cli.command('test_db')
-    def test_database():
-        from .models import File
-        from .models import User
-        from .models import Wedding
-        from .models import UserWedding
-
-        user_wedding = UserWedding.query.filter_by(user_id=2).first()
-        print(user_wedding.wedding.get_wife())

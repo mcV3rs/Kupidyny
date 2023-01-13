@@ -36,7 +36,7 @@
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a class="nav-link px-2 text-white" href="{{ url_for('recipes.index') }}">Home</a></li>
                 {% if current_user.is_authenticated and current_user.is_configured() %}
-                    <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.qr_guest') }}">Kody QR</a></li>
+                    <li><a class="nav-link px-2 text-white" href="{{ url_for('users.qr_hub') }}">Kody QR</a></li>
                     <li><a class="nav-link px-2 text-white" href="{{ url_for('photo.book_edit') }}">Foto książka</a>
                     </li>
                 {% elif current_user.is_authenticated %}

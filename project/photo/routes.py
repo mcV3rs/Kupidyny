@@ -212,23 +212,6 @@ def import_book():
         return redirect(url_for('recipes.index'))
 
 
-@photo_blueprint.route('/qr')
-def qr_guest():
-    """
-    Strona zawierająca QR kody dla gości
-    """
-    user_wedding = UserWedding.query.filter_by(user_id=current_user.id).first()
-
-    if user_wedding is None:
-        flash('Dla aktualnego konta nie ma przypisanego wesela, proszę skontaktować się z serwisem')
-        return redirect(url_for('recipes.index'))
-    else:
-        return render_template('qr_hub.html',
-                               files=f.get_photos(user_wedding.wedding.get_id()),
-                               wedding_id=user_wedding.wedding.id,
-                               wedding_uuid=user_wedding.wedding.get_uuid())
-
-
 """
 Obsługa pobierania - pobieranie książki w formatach
 """
