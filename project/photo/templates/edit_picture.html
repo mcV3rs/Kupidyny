@@ -38,6 +38,17 @@
 
 <main class="content">
     <main class="container my-5">
+        <div class="p-5 my-4 bg-light rounded-3">
+            <div class="container-fluid py-2">
+
+                <label for="guest_name">Przedstaw się, żeby Para Młoda wiedział od kogo są życzenia</label>
+                <input id="guest_name"
+                       name="guest_name"
+                       type="text">
+
+            </div>
+        </div>
+
         <div class="w-100" id="image-editor"></div>
     </main>
 </main>
@@ -80,6 +91,8 @@
             const fd = new FormData();
             fd.append('image', imageInfo.imageBase64)
             fd.append('extension', imageInfo.extension)
+            // TODO ostrzeżenie o braku wypełnienia pola
+            fd.append('guest_name', document.getElementById('guest_name').value)
 
             const req = fetch('/save_picture/{{ wedding.get_uuid() }}', {
                 mode: 'no-cors',

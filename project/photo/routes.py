@@ -470,6 +470,7 @@ def upload_file_guest(wedding_uuid):
     if wedding is not None:
         image_data = re.sub('^data:image/.+;base64,', '', request.form['image'])
         extension = request.form["extension"]
+        guest_name = request.form["guest_name"]
 
         uploaded_file = base64.b64decode(image_data)
         filename = f"{int(time.time())}.{extension}"
@@ -482,8 +483,7 @@ def upload_file_guest(wedding_uuid):
 
             path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
 
-            # TODO hardcode guest_name
-            new_file = File(path=filename, wedding_id=wedding.get_id(), guest_name="Ciocia Ania")
+            new_file = File(path=filename, wedding_id=wedding.get_id(), guest_name=guest_name)
             db.session.add(new_file)
             db.session.commit()
 
