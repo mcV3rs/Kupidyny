@@ -35,7 +35,7 @@
 
 <main class="content">
     <main class="container">
-        <div class="p-5 my-4 bg-light rounded-3">
+        <div class="p-5 my-4 bg-light rounded-3" id="drop-area">
             <div class="container-fluid py-5">
                 <h4 class="display-5 fw-bold">Dodaj zdjęcie:</h4>
 
@@ -45,14 +45,12 @@
                         <form action="{{ url_for('photo.edit_picture_guest', wedding_uuid=wedding_uuid) }}"
                               method="POST"
                               enctype="multipart/form-data">
-                            <input
-                                    type="file"
-                                    class="filepond"
-                                    name="file"
-                                    accept="image/*">
+                            <p>Zrób sobie zdjęcie lub wybierz któreś z galerii urządzenia. Zdjęcie możesz również
+                                przeciągnąć</p>
+
+                            <input accept="image/*" id="file" multiple name="file" type="file">
 
                             <input type="submit" value="Zatwierdź">
-
                         </form>
 
                     </div>
@@ -78,5 +76,22 @@
 <script crossorigin="anonymous"
         integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+
+<script>
+    dropContainer = document.getElementById("drop-area")
+    fileInput = document.getElementById("file")
+
+    dropContainer.ondragover = dropContainer.ondragenter = function (evt) {
+        evt.preventDefault();
+    };
+
+    dropContainer.ondrop = function (evt) {
+        // pretty simple -- but not for IE :(
+        fileInput.files = evt.dataTransfer.files;
+
+        evt.preventDefault();
+    };
+</script>
+
 </body>
 </html>
