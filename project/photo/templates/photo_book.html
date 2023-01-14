@@ -14,16 +14,23 @@
             <h2 class="display-5 fw-bold">Zdjęcia</h2>
 
             <div class="img-container">
+
+                <!--
+
                 <div class="imgs-wrapper">
 
-                    <!--
                     <div class="uploaded-imgs">
                         {% for file in files %}
                         <img class="uploaded-img"
                              src="{{ url_for('recipes.download_file', filename=file) }}">
                         {% endfor %}
                     </div>
-                    -->
+
+                </div>
+
+                -->
+
+                <div class="mt-3">
 
                     <a class="btn generate-img" href="{{ url_for('photo.download_html_book', wedding_id=wedding_id) }}"
                        role="button">
@@ -39,7 +46,8 @@
                         <i class="fa-solid fa-file-word"></i>
                     </a>
 
-                    <a class="btn generate-img" href="{{ url_for('photo.download_cupid_book', wedding_id=wedding_id) }}" role="button">
+                    <a class="btn generate-img" href="{{ url_for('photo.download_cupid_book', wedding_id=wedding_id) }}"
+                       role="button">
                         <i class="fa-solid fa-file-arrow-down"></i>
                     </a>
 
@@ -47,7 +55,6 @@
                        role="button">
                         <i class="fa-solid fa-file-zipper"></i>
                     </a>
-
                 </div>
             </div>
         </div>
