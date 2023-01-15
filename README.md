@@ -41,6 +41,12 @@ W celu poprawnego działania aplikacji wymagane jest utworzenie bazy danych SQLi
 (venv) $ flask populate_db
 ```
 
+### Obsługa generowania plików PDF
+
+W celu umożliwienia aplikacji generowania plików PDF należy doinstalować
+narzędzie [wkhtmltopdf](https://wkhtmltopdf.org/). Szczegółowe informacje znajdują się w
+zakładce [Downloads](https://wkhtmltopdf.org/downloads.html).
+
 ### Aktywacja aplikacji
 
 Aktywacja serwera aplikacji w trybie deweloperskim:
@@ -63,18 +69,18 @@ Aplikacja będzie dostępna pod adresem http://127.0.0.1:5000 oraz http://<lokal
 
 ## Użyte pakiety
 
-* **Flask**: mikro-framework do tworzenia aplikacji sieciowych, wraz z następującymi zależnościami:
-  * click: pakiet do tworzenia interfejsów wiersza poleceń
-  * itsdangerous: kryptograficzne podpisywanie danych
-  * Jinja2: silnik szablonów
-  * MarkupSafe: zamiana znaczenia znaków w celu zwiększenia bezpieczeństwa danych przekazywanych od użytkownika
-  * Werkzeug: zbiór narzędzi do tworzenia aplikacji, która może komunikować się z serwerem WSGI
-* **pytest**: framework do testowania projektów w Pythonie
-* **Flask-SQLAlchemy** - ORM (Object Relational Mapper) dla Flask
-* **Flask-Login** - obsługa zarządzania użytkownikami (logowanie/wylogowanie) w Flask
-* **Flask-WTF** - uproszczenie formularzy w Flask
-* **flake8** - narzędzie do analizy statycznej
-* **pdfkit** - dodatek do narzędzia wkhtmltopdf do konwersji HTML na PDF za pomocą Webkit.
+* **Flask** — mikro-framework do tworzenia aplikacji sieciowych, wraz z następującymi zależnościami:
+  * click — pakiet do tworzenia interfejsów wiersza poleceń
+  * itsdangerous — kryptograficzne podpisywanie danych
+  * Jinja2 — silnik szablonów
+  * MarkupSafe — zamiana znaczenia znaków w celu zwiększenia bezpieczeństwa danych przekazywanych od użytkownika
+  * Werkzeug — zbiór narzędzi do tworzenia aplikacji, która może komunikować się z serwerem WSGI
+* **pytest** — framework do testowania projektów w Pythonie
+* **Flask-SQLAlchemy** — ORM (Object Relational Mapper) dla Flask
+* **Flask-Login** — obsługa zarządzania użytkownikami (logowanie/wylogowanie) w Flask
+* **Flask-WTF** — uproszczenie formularzy w Flask
+* **flake8** — narzędzie do analizy statycznej
+* **pdfkit** — dodatek do narzędzia wkhtmltopdf do konwersji HTML na PDF za pomocą Webkit.
 
 Aplikacja została napisana z wykorzystaniem Pythona 3.10.
 
