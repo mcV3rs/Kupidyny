@@ -179,7 +179,7 @@ def import_book():
 
             # Import danych dotyczących wesela
             wedding = UserWedding.query.filter_by(user_id=current_user.get_id()).first().wedding
-            with open(os.path.join(path, "wedding.csv"), 'r') as file:
+            with open(os.path.join(path, "wedding.csv"), 'r', encoding="utf-8") as file:
                 dict_reader = csv.DictReader(file)
                 list_of_dict = list(dict_reader)
 
@@ -189,7 +189,7 @@ def import_book():
                 wedding.date = datetime.datetime.strptime(list_of_dict[0]["date"], "%Y-%m-%d").date()
 
             # Import danych dotyczących zdjęć
-            with open(os.path.join(path, "files.csv"), 'r') as file:
+            with open(os.path.join(path, "files.csv"), 'r', encoding="utf-8") as file:
                 dict_reader = csv.DictReader(file)
                 list_of_dict = list(dict_reader)
 
@@ -432,13 +432,13 @@ def edit_picture_guest(wedding_uuid):
                 flash('Nieudane wgranie pliku, możliwe, że użyte rozszerzenie nie jest wspierane przez serwis')
                 return redirect(url_for('recipes.index'))
 
-            path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
+            path = os.path.join(current_app.config['UPLOAD_PATH'], f"tmp/{filename}")
             uploaded_file.save(path)
 
             return render_template('edit_picture.html',
                                    path=path,
                                    wedding_id=wedding.get_id(),
-                                   img=filename,
+                                   img=f"tmp/{filename}",
                                    wedding=wedding)
     else:
         flash('Niepoprawny lub uszkodzony link')
