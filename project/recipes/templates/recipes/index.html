@@ -8,14 +8,18 @@
                  src="https://cdn.pixabay.com/photo/2018/02/21/14/22/cluster-3170449_960_720.png" width="700">
         </div>
         <div class="col-lg-6">
-            <h1 class="display-5 fw-bold lh-1 mb-3">Kupid Albumy weselne</h1>
-            <p class="lead">Witaj na naszej stronie, specjalizujemy się w tworzeniu eleganckich albumów ślubnych w formie pliku PDF lub HTML, które 
-			można edytować i personalizować według własnych preferencji. Nasze albumy są łatwe w użyciu i dostępne na każdym urządzeniu. Dzięki temu, że 
-			są one w formie pliku, można je łatwo udostępnić rodzinie i przyjaciołom.<br>Dziękujemy za zaufanie i mamy nadzieję, że będziemy mogli stworzyć dla Ciebie niepowtarzalną pamiątkę.</p>
+            <h1 class="display-5 fw-bold lh-1 mb-3">Kupid Albumy Weselne</h1>
+            <p class="lead">
+                Specjalizujemy się w tworzeniu eleganckich albumów ślubnych w formie pliku PDF lub HTML, które można
+                edytować i personalizować według własnych preferencji.
+                Nasze albumy są łatwe w użyciu i dostępne na każdym urządzeniu. Dzięki temu, że są one w formie pliku,
+                można je łatwo udostępnić rodzinie i przyjaciołom.<br>
+
+                Dziękujemy za zaufanie i mamy nadzieję, że będziemy mogli stworzyć dla Ciebie niepowtarzalną pamiątkę.
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
 
                 {% if current_user.is_authenticated %}
-                <a class="btn btn-primary btn-lg px-4 me-md-2" href="{{ url_for('users.profile') }}" type="button">Mój
+                <a class="btn btn-light btn-lg px-4 me-md-2" href="{{ url_for('users.profile') }}" type="button">Mój
                     Profil</a>
                 {% else %}
                 <a class="btn btn-primary btn-lg px-4 me-md-2" href="{{ url_for('users.login') }}" type="button">Logowanie</a>

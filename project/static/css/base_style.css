@@ -1,84 +1,93 @@
 :root {
-  --spacer: 20px;
-  --gutters: 24px;
+    --spacer: 20px;
+    --gutters: 24px;
 }
 
 
 * {
-  font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-image: url('../img/background.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center top;
+    background-size: cover;
+    font-family: Arial, sans-serif;
 }
 
 .form-signin {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: auto;
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
 }
 
 .form-signin .checkbox {
-  font-weight: 400;
+    font-weight: 400;
 }
 
 .form-signin .form-floating:focus-within {
-  z-index: 2;
+    z-index: 2;
 }
 
 .form-signin .top {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .form-signin .middle {
-  margin-bottom: -1px;
-  border-radius: 0;
+    margin-bottom: -1px;
+    border-radius: 0;
 }
 
 .form-signin .bottom {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .close-btn {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: 0.5s;
-  line-height: 1;
-  color: white;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.5s;
+    line-height: 1;
+    color: white;
 }
 
 .close-btn svg {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
 }
 
 .close-btn:hover {
-  background: white;
-  color: black;
+    background: white;
+    color: black;
 }
 
 .flash-message {
-  background: #38CFD9;
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem var(--gutters);
-  transition: opacity 1.0s;
+    background: #38CFD9;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem var(--gutters);
+    transition: opacity 1.0s;
 }
 
 .flash-message p,
 .flash-message span {
-  font-size: 1.1rem;
+    font-size: 1.1rem;
 }
 
-body {
-  background-image: url('../img/background.png');
-  background-size: cover;
-  font-family: Arial, sans-serif;
+.footer-abs {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }

@@ -26,12 +26,6 @@
 <header class="p-3 bg-dark text-white">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
-               href="{{ url_for('recipes.index') }}">
-                <svg aria-label="Bootstrap" class="bi me-2" height="32" role="img" width="40">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
-            </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a class="nav-link px-2 text-white" href="{{ url_for('recipes.index') }}">Home</a></li>
@@ -50,16 +44,16 @@
                     <a class="btn btn-outline-light me-2" href="{{ url_for('users.profile') }}" role="button">
                         Profil
                     </a>
-                    <a class="btn btn-warning" href="{{ url_for('users.logout') }}" role="button">
+                    <a class="btn btn-light" href="{{ url_for('users.logout') }}" role="button">
                         Wyloguj
                     </a>
                 {% else %}
                     <a class="btn btn-outline-light me-2" href="{{ url_for('users.login') }}" role="button">
                         Logowanie
                     </a>
-                    <a class="btn btn-warning" href="{{ url_for('users.register') }}" role="button">
-                        Rejestrowanie
-                    </a>
+                <a class="btn btn-light" href="{{ url_for('users.register') }}" role="button">
+                    Rejestrowanie
+                </a>
                 {% endif %}
             </div>
         </div>
