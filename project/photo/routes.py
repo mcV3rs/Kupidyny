@@ -20,7 +20,6 @@ from .. import db
 from ..models import File, Wedding, UserWedding
 
 
-# TODO Dodać obsługę zdjęcia hero dla albumu
 def prepare_html(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 

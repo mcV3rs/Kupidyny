@@ -38,16 +38,16 @@
 
 <div class="messages">
     {% for message in get_flashed_messages() %}
-        <div class="flash-message">
-            <p>{{ message }}</p>
-            <span class="close-btn" onclick="this.parentElement.style.opacity=0;">
+    <div class="flash-message">
+        <p>{{ message }}</p>
+        <span class="close-btn" onclick="this.parentElement.style.opacity=0;">
                 <svg width="12" height="12" version="1.1" viewBox="0 0 100 100"
                      xmlns="http://www.w3.org/2000/svg">
                         <path d="m49.941 35.891 33.531-33.531 14.168 14.168-33.531 33.414 33.531 33.531-14.168 14.168-33.531-33.531-33.414 33.531-14.168-14.168 33.531-33.531-33.531-33.414 14.168-14.168z"
-                                  fill-rule="evenodd" fill="currentColor"></path>
+                              fill="currentColor" fill-rule="evenodd"></path>
                 </svg>
             </span>
-        </div>
+    </div>
     {% endfor %}
 </div>
 
@@ -58,9 +58,15 @@
             <div class="container-fluid py-2">
 
                 <label for="guest_name">Przedstaw się, żeby Para Młoda wiedział od kogo są życzenia</label>
-                <input id="guest_name"
-                       name="guest_name"
-                       type="text">
+                <div class="input-group mb-3">
+                    <input class="form-control"
+                           id="guest_name"
+                           name="guest_name"
+                           type="text">
+                    <div class="invalid-feedback" id="invalid-comment">
+                        Proszę wypełnić to pole!
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -90,6 +96,8 @@
 <script>
     // Const for File Robot Image Editor
     const container = document.getElementById("image-editor");
+    const guestNameContainer = document.getElementById('guest_name');
+    const invalidBox = document.getElementById('invalid-comment');
     const config = {
         source: "{{ url_for('recipes.download_file', filename=img, _external=True) }}",
         useBackendTranslations: true,
@@ -103,6 +111,12 @@
     ImageEditor.render({
         observePluginContainerSize: true,
         onSave: (imageInfo, designState) => {
+            if (guestNameContainer.value === "") {
+                invalidBox.style.display = "block";
+                guestNameContainer.style.borderColor = "red";
+                return
+            }
+
             const fd = new FormData();
             fd.append('image', imageInfo.imageBase64)
             fd.append('extension', imageInfo.extension)
@@ -118,6 +132,8 @@
             req.then(function (response) {
                 if (!response.ok) {
                     console.log(response)
+                } else {
+                    location.replace("/");
                 }
             }, function (error) {
                 console.log(error)
