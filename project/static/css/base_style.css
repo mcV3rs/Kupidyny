@@ -77,3 +77,8 @@
   font-size: 1.1rem;
 }
 
+body {
+  background-image: url('../img/background.png');
+  background-size: cover;
+  font-family: Arial, sans-serif;
+}
