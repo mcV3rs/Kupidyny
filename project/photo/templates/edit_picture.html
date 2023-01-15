@@ -120,7 +120,6 @@
             const fd = new FormData();
             fd.append('image', imageInfo.imageBase64)
             fd.append('extension', imageInfo.extension)
-            // TODO ostrzeżenie o braku wypełnienia pola
             fd.append('guest_name', document.getElementById('guest_name').value)
 
             const req = fetch('/save_picture/{{ wedding.get_uuid() }}', {
