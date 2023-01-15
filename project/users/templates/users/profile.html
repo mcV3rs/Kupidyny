@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mb-5">
+<div class="container mb-5 background-image_kupid">
+
     <h1 class="my-2">Profil użytkownika</h1>
 
     <div class="row align-items-md-stretch">
         <div class="col-md-4">
-            <div class="h-100 p-5 text-white bg-dark rounded-3">
+            <div class="h-100 p-5 custom-bg-color rounded-3">
                 <h2>Konto</h2>
-                <p>Email: {{ current_user.email }}</p>
-                <p>Data utworzenia: {{ current_user.registered_on.strftime("%d.%m.%Y") }}</p>
+                <p class="no-margin"><strong>Email:</strong> {{ current_user.email }}</p>
+                <p class="no-margin"><strong>Data utworzenia:</strong> {{ current_user.registered_on.strftime("%d.%m.%Y") }}</p>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="h-100 p-5 bg-light border rounded-3">
+            <div class="h-100 p-5 custom-bg-color rounded-3">
                 <h2>Dane wesela</h2>
 
                 <form action="{{ url_for('users.profile') }}" method="POST">
@@ -29,7 +30,7 @@
                            placeholder="Mąż"
                            type="text"
                            value="{{ wedding.get_husband() }}">
-
+                    <br>
                     <input id="city"
                            name="city"
                            placeholder="Miejscowość"
@@ -42,13 +43,14 @@
                            type="date"
                            value="{{ wedding.get_date_form() }}">
 
-                    <button type="submit">Zapisz</button>
+                    <br>
+                    <button type="submit" class="custom_button_look">Zapisz</button>
                 </form>
             </div>
         </div>
 
         <div class="col-md-12">
-            <div class="h-100 p-5 bg-secondary text-white border rounded-3 my-4">
+            <div class="h-100 p-5 custom-bg-color rounded-3 my-4">
                 <h2>Import danych weselnych</h2>
 
                 <form action="{{ url_for('photo.import_book') }}"
@@ -60,7 +62,7 @@
                             name="cupid_file"
                             type="file">
 
-                    <input type="submit" value="Zatwierdź">
+                    <input type="submit" class = "custom_button_look" value="Zatwierdź">
 
                 </form>
 

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<main class="form-signin">
+<div class="background-image_kupid_login">
+<main class="form-signin center-form">
+
     <form method="post">
         {{ form.csrf_token }}
 
-        <img alt="" class="mb-4" height="57" src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
-             width="72">
         <h1 class="h3 mb-3 fw-normal">Please log in</h1>
 
         <div class="form-floating">
@@ -32,7 +32,8 @@
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
     </form>
-</main>
 
+</main>
+</div>>
 {% endblock %}
 

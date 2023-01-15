@@ -21,9 +21,9 @@
     <link href="{{ url_for('static', filename='css/photo.css') }}" rel="stylesheet">
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 ">
 <header class="p-3 bg-dark text-white">
-    <div class="container">
+    <div class="container ">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a class="nav-link px-2 text-secondary" href="{{ url_for('recipes.index') }}">Kupidyn Home</a></li>
@@ -36,7 +36,7 @@
     </div>
 </header>
 
-<div class="messages">
+<div class="messages ">
     {% for message in get_flashed_messages() %}
         <div class="flash-message">
             <p>{{ message }}</p>
@@ -52,12 +52,13 @@
 </div>
 
 
-<main class="content">
-    <main class="container my-5">
-        <div class="p-5 my-4 bg-light rounded-3">
-            <div class="container-fluid py-2">
+<main class="content background-image_kupid">
+    <main class="container my-5 ">
+        <div class="p-5 my-4 custom-bg-color rounded-3 d-flex align-items-center justify-content-center">
+            <div class="container-fluid py-2 ">
 
                 <label for="guest_name">Przedstaw się, żeby Para Młoda wiedział od kogo są życzenia</label>
+                <br>
                 <input id="guest_name"
                        name="guest_name"
                        type="text">

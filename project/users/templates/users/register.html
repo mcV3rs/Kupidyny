@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="background-image_kupid_login">
 <main class="form-signin">
     <form method="post">
         {{ form.csrf_token }}
 
-        <img alt="" class="mb-4" height="57" src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
-             width="72">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
         <div class="form-floating">
@@ -43,5 +42,6 @@
         <small class="text-muted">By clicking Sign up, you agree to the terms of use.</small>
     </form>
 </main>
+</div>
 {% endblock %}
 
