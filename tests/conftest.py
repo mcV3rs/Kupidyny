@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from project import create_app, db
-from project.models import User, File, Wedding
+from project.models import User, File, Wedding, UserWedding
 
 
 # Fixtures
@@ -51,6 +51,12 @@ def init_database(test_client):
     wedding2 = Wedding(wife="Karolina", husband="Michał", city="Katowice", date=datetime(2023, 2, 13))
     db.session.add(wedding1)
     db.session.add(wedding2)
+
+    # Add test user wedding connection
+    con1 = UserWedding(wedding_id=1, user_id=1)
+    con2 = UserWedding(wedding_id=2, user_id=2)
+    db.session.add(con1)
+    db.session.add(con2)
 
     # Commit the changes for the users
     db.session.commit()

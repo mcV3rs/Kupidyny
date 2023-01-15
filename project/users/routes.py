@@ -44,6 +44,7 @@ def profile():
 
 
 @users_blueprint.route('/qr')
+@login_required
 def qr_hub():
     """
     Strona zawierająca QR kody
