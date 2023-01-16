@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mb-5 background-image_kupid">
+<div class="container mb-5 background-image-kupid">
 
     <h1 class="my-2">Profil użytkownika</h1>
 
@@ -10,7 +10,8 @@
             <div class="h-100 p-5 custom-bg-color rounded-3">
                 <h2>Konto</h2>
                 <p class="no-margin"><strong>Email:</strong> {{ current_user.email }}</p>
-                <p class="no-margin"><strong>Data utworzenia:</strong> {{ current_user.registered_on.strftime("%d.%m.%Y") }}</p>
+                <p class="no-margin"><strong>Data utworzenia:</strong> {{
+                    current_user.registered_on.strftime("%d.%m.%Y") }}</p>
             </div>
         </div>
 
@@ -19,32 +20,36 @@
                 <h2>Dane wesela</h2>
 
                 <form action="{{ url_for('users.profile') }}" method="POST">
-                    <input id="wife"
-                           name="wife"
-                           placeholder="Żona"
-                           type="text"
-                           value="{{ wedding.get_wife() }}">
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="wifeName">Żona</label>
+                            <input class="form-control" id="wifeName" name="wife" placeholder="Żona" type="text"
+                                   value="{{ wedding.get_wife() }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="husbandName">Mąż</label>
+                            <input class="form-control" id="husbandName" name="husband" placeholder="Mąż"
+                                   type="text" value="{{ wedding.get_husband() }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="cityName">Miejscowość</label>
+                            <input class="form-control" id="cityName" name="city" placeholder="Miejscowość"
+                                   type="text" value="{{ wedding.get_city() }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="date">Data</label>
+                            <input class="form-control" id="date" name="date" placeholder="Data" type="date"
+                                   value="{{ wedding.get_date_form() }}">
+                        </div>
+                    </div>
 
-                    <input id="husband"
-                           name="husband"
-                           placeholder="Mąż"
-                           type="text"
-                           value="{{ wedding.get_husband() }}">
-                    <br>
-                    <input id="city"
-                           name="city"
-                           placeholder="Miejscowość"
-                           type="text"
-                           value="{{ wedding.get_city() }}">
+                    <div class="row justify-content-center">
+                        <button class="btn btn-light col-sm-10 btn-large px-4 float-right" type="submit">Zatwierdź
+                        </button>
+                    </div>
 
-                    <input id="date"
-                           name="date"
-                           placeholder="Data"
-                           type="date"
-                           value="{{ wedding.get_date_form() }}">
-
-                    <br>
-                    <button type="submit" class="custom_button_look">Zapisz</button>
                 </form>
             </div>
         </div>
@@ -56,13 +61,11 @@
                 <form action="{{ url_for('photo.import_book') }}"
                       enctype="multipart/form-data"
                       method="POST">
-                    <input
-                            accept=".cupid"
-                            class="file"
-                            name="cupid_file"
-                            type="file">
 
-                    <input type="submit" class = "custom_button_look" value="Zatwierdź">
+                    <div class="input-group col-sm-6 mb-3 ">
+                        <input accept=".cupid" class="form-control mb-0" id="cupidFile" name="cupid_file" type="file">
+                        <button class="btn btn-light" type="submit">Wgraj</button>
+                    </div>
 
                 </form>
 
