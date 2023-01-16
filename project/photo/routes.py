@@ -227,12 +227,16 @@ def download_html_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -264,12 +268,16 @@ def download_pdf_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -301,12 +309,16 @@ def download_cupid_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -338,6 +350,9 @@ def download_zip_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             for extensions in paths:
                 os.remove(paths[extensions])
@@ -345,6 +360,7 @@ def download_zip_book(wedding_id):
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
