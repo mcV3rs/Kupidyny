@@ -113,6 +113,6 @@ W celu sprawdzenia pokrycia kodu:
 
 ## Status projektu
 
-Projekt jest aktualnie w fazie rozwoju.
+Projekt ma status zakończony
 
 ---
