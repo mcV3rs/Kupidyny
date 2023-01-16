@@ -46,8 +46,74 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+    def is_configured(self):
+        wedding = UserWedding.query.filter_by(user_id=self.id).first().wedding
+
+        if wedding.get_wife() != "" and wedding.get_husband() != "" and wedding.get_city() != "":
+            return True
+        else:
+            return False
+
     def get_id(self):
         return str(self.id)
+
+
+class Wedding(db.Model):
+    __tablename__ = 'weddings'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    wife = db.Column(db.String, nullable=False)
+    husband = db.Column(db.String, nullable=False)
+    city = db.Column(db.String, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    uuid = db.Column(UUID(as_uuid=True), default=uuid4)
+
+    def __init__(self, wife: str, husband: str, city: str, date: db.Date):
+        self.wife = wife
+        self.husband = husband
+        self.city = city
+        self.date = date
+
+    def __repr__(self):
+        return f'<Wedding: {self.wife}, {self.husband}, {self.city}, {self.date}>'
+
+    def get_id(self):
+        return str(self.id)
+
+    def get_wife(self):
+        return str(self.wife)
+
+    def get_husband(self):
+        return str(self.husband)
+
+    def get_city(self):
+        return str(self.city)
+
+    def get_uuid(self):
+        return str(self.uuid)
+
+    def get_date(self):
+        return str(self.date.strftime('%d.%m.%Y'))
+
+    def get_date_form(self):
+        return str(self.date.strftime('%Y-%m-%d'))
+
+    def to_csv(self):
+        column = [
+            "wife",
+            "husband",
+            "city",
+            "date",
+        ]
+
+        row = [
+            self.wife,
+            self.husband,
+            self.city,
+            self.date
+        ]
+
+        return column, row
 
 
 class File(db.Model):
@@ -55,9 +121,11 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     path = db.Column(db.String, nullable=False)
-    wedding_id = db.Column(db.Integer, nullable=False)
+    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id))
     guest_name = db.Column(db.String, nullable=False)
     created_on = db.Column(db.DateTime, nullable=False)
+
+    wedding = db.relationship('Wedding', foreign_keys='File.wedding_id')
 
     def __init__(self, path: str, wedding_id: int, guest_name: str):
         self.path = secure_filename(path)
@@ -80,40 +148,38 @@ class File(db.Model):
     def get_wedding_id(self):
         return str(self.wedding_id)
 
+    @staticmethod
+    def get_columns():
+        return [
+            "path",
+            "guest_name"
+        ]
 
-class Wedding(db.Model):
-    __tablename__ = 'weddings'
+    def get_csv_row(self):
+        return [
+            self.path,
+            self.guest_name
+        ]
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    wife = db.Column(db.String, nullable=False)
-    husband = db.Column(db.String, nullable=False)
-    city = db.Column(db.String, nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    uuid = db.Column(UUID(as_uuid=True), default=uuid4)
 
-    def __init__(self, wife: str, husband: str, city: str, date: db.Date):
-        self.wife = wife
-        self.husband = husband
-        self.city = city
-        self.date = date
+class UserWedding(db.Model):
+    __tablename__ = 'users_weddings'
+
+    wedding_id = db.Column(db.Integer, db.ForeignKey(Wedding.id), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
+
+    wedding = db.relationship('Wedding', foreign_keys='UserWedding.wedding_id')
+    user = db.relationship('User', foreign_keys='UserWedding.user_id')
+
+    def __init__(self, wedding_id: int, user_id: int):
+        self.wedding_id = wedding_id
+        self.user_id = user_id
 
     def __repr__(self):
-        return f'<Wedding: {self.id}, {self.wife}, {self.husband}, {self.city}, {self.date}>'
+        return f'<User_Wedding: {self.wedding_id}, {self.user_id}>'
 
-    def get_id(self):
-        return str(self.id)
+    def get_wedding_id(self):
+        return str(self.wedding_id)
 
-    def get_wife(self):
-        return str(self.wife)
-
-    def get_husband(self):
-        return str(self.husband)
-
-    def get_city(self):
-        return str(self.city)
-
-    def get_uuid(self):
-        return str(self.uuid)
-
-    def get_date(self):
-        return str(self.date.strftime('%d.%m.%Y'))
+    def get_user_id(self):
+        return str(self.user_id)

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block styling %}
+<link href="{{ url_for('static', filename='css/photo_book.css') }}" rel="stylesheet">
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      referrerpolicy="no-referrer" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="p-5 my-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h2 class="display-5 fw-bold">QR Code Hub</h2>
+
+            <figure class="figure mx-auto d-block text-center">
+                <img alt="Kod QR dla gości do wyświetlania albumu"
+                     class="figure-img img-fluid"
+                     src="{{ qrcode(url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,  _external=True))  }}">
+                <figcaption class="figure-caption">Dodawanie zdjęć do albumu dla gości</figcaption>
+                <figcaption class="figure-caption">
+                    <a href="{{ url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,
+                    _external=True) }}">{{ url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,
+                        _external=True) }}</a>
+                </figcaption>
+            </figure>
+
+            <figure class="figure mx-auto d-block text-center mb-5">
+                <img alt="Kod QR dla gości do wyświetlania albumu"
+                     class="figure-img img-fluid"
+                     src="{{ qrcode(url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,  _external=True))  }}">
+                <figcaption class="figure-caption">Wyświetlanie albumu dla gości</figcaption>
+                <figcaption class="figure-caption">
+                    <a href="{{ url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,
+                    _external=True) }}">{{ url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,
+                        _external=True) }}</a>
+                </figcaption>
+            </figure>
+
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}
+
+{% block scripting %}
+
+{% endblock %}

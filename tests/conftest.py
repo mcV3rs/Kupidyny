@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from project import create_app, db
-from project.models import User, File, Wedding
+from project.models import User, File, Wedding, UserWedding
 
 
 # Fixtures
@@ -38,19 +38,21 @@ def init_database(test_client):
 
     # Add test pictures
     file1 = File(path='1.png', wedding_id=1, guest_name="Ciocia Ania")
-    file2 = File(path='2.jpg', wedding_id=1, guest_name="Asia")
-    file3 = File(path='3.jpg', wedding_id=2, guest_name="Marek")
-    file4 = File(path='4.jpg', wedding_id=2, guest_name="Babcia Jadzia")
+    file2 = File(path='2.jpg', wedding_id=2, guest_name="Asia")
     db.session.add(file1)
     db.session.add(file2)
-    db.session.add(file3)
-    db.session.add(file4)
 
     # Add test wedding
     wedding1 = Wedding(wife="Justyna", husband="Karol", city="Gliwice", date=datetime(2023, 1, 15))
     wedding2 = Wedding(wife="Karolina", husband="Michał", city="Katowice", date=datetime(2023, 2, 13))
     db.session.add(wedding1)
     db.session.add(wedding2)
+
+    # Add test user wedding connection
+    con1 = UserWedding(wedding_id=1, user_id=1)
+    con2 = UserWedding(wedding_id=2, user_id=2)
+    db.session.add(con1)
+    db.session.add(con2)
 
     # Commit the changes for the users
     db.session.commit()
@@ -83,5 +85,5 @@ def cli_test_client():
 
 @pytest.fixture(scope='module')
 def new_file():
-    file = File('test_file.png', wedding_id=1, guest_name="Test")
+    file = File(path='test_file.png', wedding_id=1, guest_name="Testowy")
     return file
