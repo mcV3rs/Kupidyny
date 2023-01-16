@@ -44,6 +44,7 @@ def profile():
 
 
 @users_blueprint.route('/qr')
+@login_required
 def qr_hub():
     """
     Strona zawierająca QR kody
@@ -100,6 +101,9 @@ def login():
                 db.session.commit()
                 login_user(user, remember=form.remember_me.data)
                 return redirect(url_for('users.profile'))
+            else:
+                flash('Niepoprawne dane logowania - email lub hasło')
+                return redirect(url_for('users.login'))
 
     return render_template('users/login.html', form=form)
 

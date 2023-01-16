@@ -62,8 +62,10 @@
                         życzenia</label>
                     <input class="form-control" id="guest_name" name="guest_name" placeholder="Właściciel zdjęcia"
                            type="text">
+                     <div class="invalid-feedback" id="invalid-comment">
+                        Proszę wypełnić to pole!
+                    </div>
                 </div>
-
             </div>
         </div>
 
@@ -92,6 +94,8 @@
 <script>
     // Const for File Robot Image Editor
     const container = document.getElementById("image-editor");
+    const guestNameContainer = document.getElementById('guest_name');
+    const invalidBox = document.getElementById('invalid-comment');
     const config = {
         source: "{{ url_for('recipes.download_file', filename=img, _external=True) }}",
         useBackendTranslations: true,
@@ -105,10 +109,15 @@
     ImageEditor.render({
         observePluginContainerSize: true,
         onSave: (imageInfo, designState) => {
+            if (guestNameContainer.value === "") {
+                invalidBox.style.display = "block";
+                guestNameContainer.style.borderColor = "red";
+                return
+            }
+
             const fd = new FormData();
             fd.append('image', imageInfo.imageBase64)
             fd.append('extension', imageInfo.extension)
-            // TODO ostrzeżenie o braku wypełnienia pola
             fd.append('guest_name', document.getElementById('guest_name').value)
 
             const req = fetch('/save_picture/{{ wedding.get_uuid() }}', {
@@ -120,6 +129,8 @@
             req.then(function (response) {
                 if (!response.ok) {
                     console.log(response)
+                } else {
+                    location.replace("/");
                 }
             }, function (error) {
                 console.log(error)

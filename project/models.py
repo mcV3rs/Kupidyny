@@ -75,7 +75,7 @@ class Wedding(db.Model):
         self.date = date
 
     def __repr__(self):
-        return f'<Wedding: {self.id}, {self.wife}, {self.husband}, {self.city}, {self.date}>'
+        return f'<Wedding: {self.wife}, {self.husband}, {self.city}, {self.date}>'
 
     def get_id(self):
         return str(self.id)

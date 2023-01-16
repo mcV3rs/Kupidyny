@@ -6,14 +6,14 @@
     <form method="post">
         {{ form.csrf_token }}
 
-        <h1 class="h3 mb-3 fw-normal">Please log in</h1>
+        <h1 class="h3 mb-3 fw-normal">Logowanie</h1>
 
         <div class="form-floating">
             <input autocomplete="on" class="form-control top" id="email" name="email" placeholder="name@example.com"
                    required type="email">
             <label for="email">Email address</label>
             {% for error in form.email.errors %}
-            <p class="validation-error">[{{ error }}]</p>
+            <p class="validation-error">Proszę wypełnić pole, poprawnym adresem email</p>
             {% endfor %}
         </div>
         <div class="form-floating">
@@ -21,15 +21,15 @@
                    type="password">
             <label for="password">Password</label>
             {% for error in form.password.errors %}
-            <p class="validation-error">[{{ error }}]</p>
+            <p class="validation-error">Podany adres email lub hasło nie są zgodne</p>
             {% endfor %}
         </div>
 
         <div class="checkbox mb-3">
             {{ form.remember_me() }}
-            {{ form.remember_me.label }}
+            Zapamiętaj mnie
         </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Zaloguj</button>
     </form>
 
 </main>

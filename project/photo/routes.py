@@ -20,7 +20,6 @@ from .. import db
 from ..models import File, Wedding, UserWedding
 
 
-# TODO Dodać obsługę zdjęcia hero dla albumu
 def prepare_html(wedding_id):
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
@@ -179,7 +178,7 @@ def import_book():
 
             # Import danych dotyczących wesela
             wedding = UserWedding.query.filter_by(user_id=current_user.get_id()).first().wedding
-            with open(os.path.join(path, "wedding.csv"), 'r') as file:
+            with open(os.path.join(path, "wedding.csv"), 'r', encoding="utf-8") as file:
                 dict_reader = csv.DictReader(file)
                 list_of_dict = list(dict_reader)
 
@@ -189,7 +188,7 @@ def import_book():
                 wedding.date = datetime.datetime.strptime(list_of_dict[0]["date"], "%Y-%m-%d").date()
 
             # Import danych dotyczących zdjęć
-            with open(os.path.join(path, "files.csv"), 'r') as file:
+            with open(os.path.join(path, "files.csv"), 'r', encoding="utf-8") as file:
                 dict_reader = csv.DictReader(file)
                 list_of_dict = list(dict_reader)
 
@@ -228,12 +227,16 @@ def download_html_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -265,12 +268,16 @@ def download_pdf_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -302,12 +309,16 @@ def download_cupid_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             os.remove(file_path)
         except Exception as error:
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -339,6 +350,9 @@ def download_zip_book(wedding_id):
 
     @after_this_request
     def remove_file(response):
+        if file_path == '':
+            return response
+
         try:
             for extensions in paths:
                 os.remove(paths[extensions])
@@ -346,6 +360,7 @@ def download_zip_book(wedding_id):
             current_app.logger.error("Error removing or closing downloaded file handle", error)
         return response
 
+    file_path = ''
     wedding = Wedding.query.filter_by(id=wedding_id).first()
 
     if wedding is not None:
@@ -432,13 +447,13 @@ def edit_picture_guest(wedding_uuid):
                 flash('Nieudane wgranie pliku, możliwe, że użyte rozszerzenie nie jest wspierane przez serwis')
                 return redirect(url_for('recipes.index'))
 
-            path = os.path.join(current_app.config['UPLOAD_PATH'], filename)
+            path = os.path.join(current_app.config['UPLOAD_PATH'], f"tmp/{filename}")
             uploaded_file.save(path)
 
             return render_template('edit_picture.html',
                                    path=path,
                                    wedding_id=wedding.get_id(),
-                                   img=filename,
+                                   img=f"tmp/{filename}",
                                    wedding=wedding)
     else:
         flash('Niepoprawny lub uszkodzony link')
