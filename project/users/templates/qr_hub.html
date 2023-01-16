@@ -18,8 +18,10 @@
                      class="figure-img img-fluid"
                      src="{{ qrcode(url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,  _external=True))  }}">
                 <figcaption class="figure-caption">Dodawanie zdjęć do albumu dla gości</figcaption>
-                <figcaption class="figure-caption">{{ url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,
-                    _external=True) }}
+                <figcaption class="figure-caption">
+                    <a href="{{ url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,
+                    _external=True) }}">{{ url_for('photo.add_picture_guest', wedding_uuid=wedding_uuid,
+                        _external=True) }}</a>
                 </figcaption>
             </figure>
 
@@ -28,8 +30,10 @@
                      class="figure-img img-fluid"
                      src="{{ qrcode(url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,  _external=True))  }}">
                 <figcaption class="figure-caption">Wyświetlanie albumu dla gości</figcaption>
-                <figcaption class="figure-caption">{{ url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,
-                    _external=True) }}
+                <figcaption class="figure-caption">
+                    <a href="{{ url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,
+                    _external=True) }}">{{ url_for('photo.wedding_book_guest', wedding_uuid=wedding_uuid,
+                        _external=True) }}</a>
                 </figcaption>
             </figure>
 

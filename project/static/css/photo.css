@@ -34,6 +34,8 @@
     background-size: cover;
     border: 2px solid #ffff;
     border-radius: 4px;
+    background-color: #FFF5EE;
+    border-radius: 50%;
     cursor: pointer;
 }
 
