@@ -53,7 +53,7 @@ def test_wedding_download_html_valid_id_with_fixture(test_client, init_database,
     assert response.status_code == 200
     assert response.headers['Content-Disposition'] == f'attachment; filename={wedding.get_wife()}_{wedding.get_husband()}_fotobook.html'
 
-"""
+'''
 def test_wedding_download_pdf_valid_id_with_fixture(test_client, init_database, login_default_user):
     """
     GIVEN a Flask application configured for testing with login user
@@ -66,7 +66,7 @@ def test_wedding_download_pdf_valid_id_with_fixture(test_client, init_database, 
 
     assert response.status_code == 200
     assert response.headers['Content-Disposition'] == f'attachment; filename={wedding.get_wife()}_{wedding.get_husband()}_fotobook.pdf'
-"""
+'''
 
 def test_wedding_download_cupid_valid_id_with_fixture(test_client, init_database, login_default_user):
     """
@@ -81,7 +81,8 @@ def test_wedding_download_cupid_valid_id_with_fixture(test_client, init_database
     assert response.status_code == 200
     assert response.headers['Content-Disposition'] == f'attachment; filename={wedding.get_wife()}_{wedding.get_husband()}_fotobook.cupid'
 
-"""
+
+'''
 def test_wedding_download_zip_valid_id_with_fixture(test_client, init_database, login_default_user):
     """
     GIVEN a Flask application configured for testing with login user
@@ -94,4 +95,4 @@ def test_wedding_download_zip_valid_id_with_fixture(test_client, init_database, 
 
     assert response.status_code == 200
     assert response.headers['Content-Disposition'] == f'attachment; filename={wedding.get_wife()}_{wedding.get_husband()}_fotobook.zip'
-"""
+'''
