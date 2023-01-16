@@ -38,13 +38,9 @@ def init_database(test_client):
 
     # Add test pictures
     file1 = File(path='1.png', wedding_id=1, guest_name="Ciocia Ania")
-    file2 = File(path='2.jpg', wedding_id=1, guest_name="Asia")
-    file3 = File(path='3.jpg', wedding_id=2, guest_name="Marek")
-    file4 = File(path='4.jpg', wedding_id=2, guest_name="Babcia Jadzia")
+    file2 = File(path='2.jpg', wedding_id=2, guest_name="Asia")
     db.session.add(file1)
     db.session.add(file2)
-    db.session.add(file3)
-    db.session.add(file4)
 
     # Add test wedding
     wedding1 = Wedding(wife="Justyna", husband="Karol", city="Gliwice", date=datetime(2023, 1, 15))
